@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Product Detail || Agrikol || Agriculture Form HTML Template</title>
+    <title>Farmicom || Online Farming Market</title>
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicons/favicon-16x16.png">
@@ -32,8 +32,6 @@
     <link rel="stylesheet" href="assets/css/nouislider.min.css">
     <link rel="stylesheet" href="assets/css/nouislider.pips.css">
     <link rel="stylesheet" href="assets/css/agrikol_iconl.css">
-    <link rel="stylesheet" href="assets/css/jquery-ui.css">
-    <link rel="stylesheet" href="assets/css/jquery.bootstrap-touchspin.css">
     <!-- Template styles -->
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -55,8 +53,8 @@
                 <div class="topbar_bg" style="background-image: url(assets/images/shapes/header-bg.png)"></div>
                 <div class="container">
                     <div class="topbar-one__left">
-                        <a href="mailto:needhelp@tripo.com"><span class="icon-message"></span>needhelp@agrikol.com</a>
-                        <a href="tel:666-999-0000"><span class="icon-phone-call"></span>666 888 0000</a>
+                        <a href="mailto:info@farmicom.com"><span class="icon-message"></span>info@farmicom.com</a>
+                        <a href="tel:+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
                     </div>
                     <div class="topbar-one__middle">
                         <a href="index.html" class="main-nav__logo">
@@ -66,7 +64,9 @@
                     <div class="topbar-one__right">
                         <div class="topbar-one__social">
                             <a href="#"><i class="fab fa-facebook-square"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+                                <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                              </svg></i></a>
                             <a href="#"><i class="fab fa-instagram"></i></a>
                             <a href="#"><i class="fab fa-dribbble"></i></a>
                         </div>
@@ -89,21 +89,14 @@
                             <ul class=" main-nav__navigation-box">
                                 <li class="dropdown">
                                     <a href="index.html">Home</a>
+                                  
+                                </li>
+                                <li class="dropdown current">
+                                    <a href="product.html">Shop</a>
                                     <ul>
-                                        <li><a href="index.html">Home 01</a></li>
-                                        <li><a href="index2.html">Home 02</a></li>
-                                        <li><a href="index3.html">Home 03</a></li>
-                                        <li><a href="index4.html">Home 04</a></li>
-                                        <li><a href="index5.html">Home 05</a></li>
-                                        <li class="dropdown"><a href="#">Header Versions</a>
-                                            <ul>
-                                                <li><a href="index.html">Header 01</a></li>
-                                                <li><a href="index2.html">Header 02</a></li>
-                                                <li><a href="index3.html">Header 03</a></li>
-                                                <li><a href="index4.html">Header 04</a></li>
-                                                <li><a href="index5.html">Header 05</a></li>
-                                            </ul><!-- /.sub-menu -->
-                                        </li>
+                                        <li><a href="product-detail.html">Product Detail</a></li>
+                                        <li><a href="cart.html">Cart</a></li>
+                                        <li><a href="checkout.html">Checkout</a></li>
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 <li class="dropdown">
@@ -120,15 +113,7 @@
                                         <li><a href="projects_detail.html">Projects Detail</a></li>
                                     </ul><!-- /.sub-menu -->
                                 </li>
-                                <li class="dropdown current">
-                                    <a href="#">Shop</a>
-                                    <ul>
-                                        <li><a href="product.html">Products</a></li>
-                                        <li><a href="product-detail.html">Product Detail</a></li>
-                                        <li><a href="cart.html">Cart</a></li>
-                                        <li><a href="checkout.html">Checkout</a></li>
-                                    </ul><!-- /.sub-menu -->
-                                </li>
+                                
                                 <li class="dropdown">
                                     <a href="#">Pages</a>
                                     <ul>
@@ -162,14 +147,13 @@
                 </nav>
             </header>
         </div>
-
         <section class="page-header" style="background-image: url(assets/images/backgrounds/page-header-contact.jpg);">
             <div class="container">
-                <h2>Product detail</h2>
+                <h2>Product details</h2>
                 <ul class="thm-breadcrumb list-unstyled">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="" class="shop_style">Shop</a></li>
-                    <li><span>Products</span></li>
+                    <li><span>Products Details</span></li>
                 </ul>
             </div>
         </section>
@@ -186,7 +170,7 @@
                             <h2>Basket full of vegetables</h2>
                             <div class="product_detail_review_box">
                                 <div class="product_detail_price_box">
-                                    <p>$9.98</p>
+                                    <p>KES.300.00</p>
                                 </div>
                                 <div class="product_detail_review">
                                     <a href="#"><i class="fa fa-star"></i></a>
@@ -198,9 +182,9 @@
                                 </div>
                             </div>
                             <div class="product_detail_text">
-                                <p>Aliquam hendrerit a augue insuscipit. Etiam aliquam massa quis des mauris commodo
-                                    venenatis ligula commodo leez sed blandit convallis dignissim onec vel pellentesque
-                                    neque.</p>
+                                <p>Fresh, vibrant, and nutrient-packed! Elevate your meals with our premium selection of farm-fresh vegetables. 
+                                    Picked at peak ripeness, our produce guarantees flavor and quality. From crisp greens to colorful bell peppers, 
+                                    savor the goodness of nature on your plate.</p>
                             </div>
                             <ul class="list-unstyled product_detail_address">
                                 <li>REF. 4231/406</li>
@@ -247,21 +231,19 @@
                                 <div class="tab" id="desc">
                                     <div class="product-details-content">
                                         <div class="desc-content-box">
-                                            <p>Lorem ipsum dolor sit amet sectetur adipiscin elit cras feuiat antesed
-                                                ces condimentum viverra duis autue nim convallis id diam vitae duis
-                                                egety dictum erosin dictum sem. Vivamus sed molestie sapien aliquam et
-                                                facilisis arcu dut molestie augue suspendisse sodales tortor nunced quis
-                                                cto ligula posuere cursus keuis aute irure dolor in reprehenderit in
-                                                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                                                sint occaecated cupidatat non proident sunt in culpa qui officia
-                                                deserunt mollit anim id est laborum ivamus sed molestie sapien.</p>
-                                            <p class="desc-content-box_bottom">Aliquam et facilisis arcuut olestie
-                                                augue. Suspendisse sodales tortor nunc quis auctor ligula posuere cursus
-                                                duis aute irure dolor in reprehenderit in voluptate velit esse cill
-                                                doloreeu fugiat nulla pariatur excepteur sint occaecat cupidatat non
-                                                proident sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                                Vivaus sed delly molestie sapien. Aliquam et facilisis arcuut molestie
-                                                augue. </p>
+                                            <p>
+                                                Introducing our Assorted Veggie Delight, a carefully curated bag bursting 
+                                                with a colorful array of premium vegetables to elevate your culinary adventures. 
+                                                Packed with variety and freshness, this assortment includes a vibrant mix of 
+                                                leafy greens, crunchy bell peppers, succulent tomatoes, crisp carrots, and more. 
+                                                Each vegetable is handpicked at its peak ripeness, ensuring optimal flavor and 
+                                                nutritional value.</p>
+                                            <p class="desc-content-box_bottom">Whether you're creating a hearty salad, a flavorful 
+                                                stir-fry, or a wholesome soup, our Assorted Veggie Delight provides the perfect 
+                                                foundation for culinary creativity. The diverse textures and tastes in this bag 
+                                                not only add visual appeal to your meals but also guarantee a nutrient-rich experience. 
+                                                Say goodbye to mundane meals and embrace the excitement of cooking with our thoughtfully 
+                                                curated assortment of vegetables – because every dish deserves a touch of freshness and variety!. </p>
                                         </div>
                                     </div>
                                 </div>
@@ -285,14 +267,12 @@
                                                             <img src="assets/images/shop/review-1.png" alt="">
                                                         </div>
                                                         <div class="product_reviews_content">
-                                                            <h3>Kevin Martins<span>15 Nov, 2019</span></h3>
-                                                            <p>It has survived not only five centuries, but also the
-                                                                leap into electronic typesetting unchanged. It was
-                                                                popularised in the sheets If you are going to use a
-                                                                passage of Lorem Ipsum, you need to be is simply free
-                                                                text. Nam nec tellus a odio tincidunt auctor a ornare
-                                                                odio. Sed non mauris vitae erat consequat auctor eu in
-                                                                elit.</p>
+                                                            <h3>Mwenza K.<span>15 Nov, 2023</span></h3>
+                                                            <p>"Absolutely love the freshness and quality of these vegetables! The vibrant colors and crisp 
+                                                                textures make every meal a delight. It's evident that they're picked at their peak, ensuring 
+                                                                a burst of flavor in every bite. As someone who prioritizes health, these veggies have become
+                                                                a staple in my kitchen. Highly recommend for anyone seeking top-notch produce for a wholesome 
+                                                                culinary experience!"</p>
                                                             <div class="product_reviews_rating product_detail_review">
                                                                 <a href="#"><i class="fa fa-star"></i></a>
                                                                 <a href="#"><i class="fa fa-star"></i></a>
@@ -308,14 +288,12 @@
                                                             <img src="assets/images/shop/review-2.png" alt="">
                                                         </div>
                                                         <div class="product_reviews_content">
-                                                            <h3>Kevin Martins<span>15 Nov, 2019</span></h3>
-                                                            <p>It has survived not only five centuries, but also the
-                                                                leap into electronic typesetting unchanged. It was
-                                                                popularised in the sheets If you are going to use a
-                                                                passage of Lorem Ipsum, you need to be is simply free
-                                                                text. Nam nec tellus a odio tincidunt auctor a ornare
-                                                                odio. Sed non mauris vitae erat consequat auctor eu in
-                                                                elit.</p>
+                                                            <h3>Kevin O.<span>19 Nov, 2023</span></h3>
+                                                            <p>"These vegetables have completely transformed my cooking experience! The freshness 
+                                                                is unmatched, and the variety adds a burst of color and nutrition to every dish. 
+                                                                I can taste the difference, and it's clear that they are carefully selected for 
+                                                                their quality. From salads to stir-fries, these veggies have become the star of 
+                                                                my meals. It's not just food; it's a celebration of flavor and health.".</p>
                                                             <div class="product_reviews_rating product_detail_review">
                                                                 <a href="#"><i class="fa fa-star"></i></a>
                                                                 <a href="#"><i class="fa fa-star"></i></a>
@@ -403,8 +381,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4>Split kiwi</h4>
-                                <p>$5.98</p>
+                                <h4>Chilli</h4>
+                                <p>KES 15.00</p>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6">
@@ -417,8 +395,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4>Chinese cabbage</h4>
-                                <p>$4.99</p>
+                                <h4>Kiwi</h4>
+                                <p>KES 80.00</p>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6">
@@ -431,8 +409,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4>Chili pepper</h4>
-                                <p>$4.98</p>
+                                <h4>Strawberry</h4>
+                                <p>KES 95.00</p>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6">
@@ -445,8 +423,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4>lemons</h4>
-                                <p>$6.00</p>
+                                <h4>Oranges</h4>
+                                <p>KES 15.00</p>
                             </div>
                         </div>
                     </div>
@@ -465,8 +443,8 @@
                                 <h3>About</h3>
                             </div>
                             <div class="footer-widget_about_text">
-                                <p>Lorem ipsum dolor sit amet, adipiscing elit. Nulla placerat posuere dui. Pellentesque
-                                    venenatis sem non lacus ac auctor.</p>
+                                <p>Experience elevated farming with Farmicom : where seamless online shopping, top-quality products, 
+                                    and innovative solutions converge  </p>
                             </div>
                             <form>
                                 <div class="footer_input-box">
@@ -505,7 +483,7 @@
                                         <p><a href="news_detail.html"> Learn 10 Best Tips for New Formers</a></p>
                                     </div>
                                     <div class="footer-widget__news_date_box">
-                                        <p>30 Oct, 2019</p>
+                                        <p>30 Nov, 2023</p>
                                     </div>
                                 </li>
                                 <li>
@@ -516,7 +494,7 @@
                                         <p><a href="news_detail.html">Farmer Sentiment Darkens Hopes Fade</a></p>
                                     </div>
                                     <div class="footer-widget__news_date_box">
-                                        <p>30 Oct, 2019</p>
+                                        <p>17 Oct, 2019</p>
                                     </div>
                                 </li>
                             </ul>
@@ -528,12 +506,14 @@
                                 <h3>Contact</h3>
                             </div>
                             <div class="footer-widget_contact">
-                                <p>66 Broklyn Street, New Town<br>DC 5752, New Yrok</p>
-                                <a href="mailto:needhelp@agrikol.com">needhelp@agrikol.com</a><br>
-                                <a href="tel:666-888-0000">666 888 0000</a>
+                                <p>Nairobi, Kenya<br>365-00100, Nairobi</p>
+                                <a href="mailto:info@farmicom.com">info@farmicom.com</a><br>
+                                <a href="tel:+254 712 345 678">+254 712 345 678</a>
                                 <div class="site-footer__social">
                                     <a href="#"><i class="fab fa-facebook-square"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
+                                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+                                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                                      </svg></i></a>
                                     <a href="#"><i class="fab fa-instagram"></i></a>
                                     <a href="#"><i class="fab fa-dribbble"></i></a>
                                 </div>
@@ -547,7 +527,7 @@
         <div class="site-footer_bottom">
             <div class="container">
                 <div class="site-footer_bottom_copyright">
-                    <p>@ All copyright 2020, <a href="#">Layerdrops.com</a></p>
+                    <p>@ All copyright 2024, <a href="#">Farmicom.com</a></p>
                 </div>
                 <div class="site-footer_bottom_menu">
                     <ul class="list-unstyled">
@@ -557,6 +537,8 @@
                 </div>
             </div>
         </div>
+
+
 
 
 
