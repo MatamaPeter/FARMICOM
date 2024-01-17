@@ -431,3 +431,6 @@ p {
 .sec-content .checkbox li + li {
   margin-top: 7px;
 }
+.btn{
+  border: rgb(255, 255, 255);
+}
