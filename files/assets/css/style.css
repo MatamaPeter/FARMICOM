@@ -153,7 +153,25 @@ h6 {
     background-color: var(--thm-primary);
     color: #ffffff;
 }
+.thm-bt {
+    display: inline-block;
+    vertical-align: middle;
+    border: none;
+    outline: none;
+    background-color: var(white);
+    font-size: 20px;
+    color: var(rgb(255, 0, 0));
+    font-weight: 600;
+    padding: 23px 50px;
+    border-radius: 5px;
+    -webkit-transition: all 0.4s ease;
+    transition: all 0.4s ease;
+}
 
+.thm-bt:hover {
+    background-color: var(--thm-primary);
+    color: #00ff15;
+}
 .owl-carousel.owl-dot-type1 .owl-stage-outer {
     position: relative;
     display: block;
