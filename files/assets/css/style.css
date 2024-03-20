@@ -935,11 +935,13 @@ h6 {
     display: flex;
     -webkit-box-align: center;
     align-items: center;
+    gap: 1rem
 }
 .main-nav__right .icon_cart_box {
     position: relative;
-    display: block;
+    display: flex;
     padding: 32px 0 15px;
+    gap:0.2rem;
 }
 .main-nav__right .icon_cart_box a {
     color: white;
@@ -1372,7 +1374,51 @@ h6 {
 .stricked-menu .main-nav__right.four .icon_cart_box a {
     color: var(--thm-black);
 }
-
+sup{
+    border-radius: 5px;
+    background-color: var(--thm-base);
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--thm-black);
+    font-size: 12px;
+    font-weight: bolder;
+    padding: 8px;
+}
+.usern{
+    
+    color: var(--thm-base);
+    display: flex; /* Set display to flex to enable flexbox properties */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    height: 20px; /* Adjust the height of the button */
+    width: auto; /* Allow the button width to adjust based on content */
+    cursor: pointer; /* Indicate clickable element */
+    transition: background-color 0.2s ease;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bolder;
+    
+}
+.logout-button {
+    display: flex; /* Set display to flex to enable flexbox properties */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    background-color: var(--thm-gray); /* Button background color (white) */
+    border: none; /* Remove default button border */
+    border-radius: 5px; /* Set border radius for rounded corners */
+    color: black; /* Text color inside the button */
+    height: 20px; /* Adjust the height of the button */
+    width: auto; /* Allow the button width to adjust based on content */
+    cursor: pointer; /* Indicate clickable element */
+    transition: background-color 0.2s ease;
+    padding: 5px 10px;
+    font-size: 10px;
+    font-weight: bolder;
+    
+  }
+  
+  .logout-button:hover {
+    background-color: var(--thm-base); /* Button background color on hover (yellow) */
+  }
 /*--------------------------------------------------------------
 # Site Header Header Five Wrap
 --------------------------------------------------------------*/
