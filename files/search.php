@@ -1,4 +1,27 @@
-<?php session_start(); ?>
+<?php session_start(); 
+
+include("config.php");
+unset($_SESSION['search_results']);
+if (isset($_POST['btnt'])) {
+    $search_item = mysqli_real_escape_string($con, $_POST['search']);
+    $select_item = mysqli_query($con, "SELECT * FROM products WHERE Product_name LIKE '%{$search_item}%'") or die("Query failed");
+
+    if ($select_item->num_rows > 0) {
+        $search_results = array();
+
+        while ($row = $select_item->fetch_assoc()) {
+            $search_results[] = array(
+                'product_img' => $row['Product_img'],
+                'Product_name' => $row['Product_name'],
+                'Price' => $row['Price']
+            );
+        }
+        $_SESSION['search_results'] = $search_results;
+        
+    } 
+}
+     
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,32 +72,7 @@
         <div class="page-wrapper">
     
     
-            <div class="site-header__header-one-wrap">
-    
-                <div class="topbar-one">
-                    <div class="topbar_bg" style="background-image: url(assets/images/shapes/header-bg.png)"></div>
-                    <div class="container">
-                        <div class="topbar-one__left">
-                            <a href="mail to: info@farmicom.com"><span class="icon-message"></span>info@farmicom.com</a>
-                            <a href="+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
-                        </div>
-                        <div class="topbar-one__middle">
-                            <a href="index.html" class="main-nav__logo">
-                                <img src="assets/images/resources/logo.png" class="main-logo" alt="Awesome Image" />
-                            </a>
-                        </div>
-                        <div class="topbar-one__right">
-                            <div class="topbar-one__social">
-                                <a href="#"><i class="fab fa-facebook-square"></i></a>
-                                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-                                    <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                                  </svg></i></a>
-                                <a href="#"><i class="fab fa-instagram"></i></a>
-                                <a href="#"><i class="fab fa-dribbble"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            
     
                 <header class="main-nav__header-one">
                     <nav class="header-navigation stricky">
@@ -146,18 +144,6 @@
                     </nav>
                 </header>
             </div>
-
-        <section class="page-header" style="background-image: url(assets/images/backgrounds/page-header-contact.jpg);">
-            <div class="container">
-                <h2>Products</h2>
-                <ul class="thm-breadcrumb list-unstyled">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="" class="shop_style">Shop</a></li>
-                    <li><span>Products</span></li>
-                </ul>
-            </div>
-        </section>
-
         <section class="product">
             <div class="container">
                 <div class="row">
@@ -239,44 +225,38 @@
                     <!--End Sidebar Wrapper-->
                     <div class="col-xl-9 col-lg-9">
                         <div class="product-items">
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div class="showing-result-shorting">
-                                        <div class="left">
-                                            <div class="showing">
-                                                <p>Showing  Results</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="all_products">
+                           
+                        
+                        <div class="all_products">
                                 <div class="row">
                                     
-                                <?php
-if(isset($_SESSION['search_results'])){
-    foreach($_SESSION['search_results'] as $product){
-        ?>
+                                
+                                <?php if (isset($_SESSION['search_results'])): 
+            foreach ($_SESSION['search_results'] as $result):
+            ?>
+        
         <div class="col-xl-4 col-lg-4 col-md-6">
             <div class="all_products_single text-center">
                 <div class="all_product_item_image">
-                   <img src="<?php echo $product['product_img']; ?>" alt="<?php echo $product['Product_name']; ?>">
+                   <img src="<?php echo $result['product_img']; ?>" alt="">
                     <div class="all_product_hover">
                         <div class="all_product_icon">
                             <a href="cart.html"><span class="icon-shopping-cart"></span></a>
                         </div>
                     </div>
                 </div>
-                <h4><?php echo $product['Product_name']; ?></h4>
-                <p><?php echo $product['Price']; ?></p>
+                <h4><?php echo $result['Product_name'];?></h4>
+                <p><?php echo $result['Price'];?></p>
+                <?php endforeach; ?>
+                <?php else: ?>
+                 <p>No results found</p>
+                <?php endif; ?>
+                
             </div>
         </div>
         <?php
-    }
-} else {
-    echo "Search something";
-}
+    
+ 
 ?>
 
                             </div>
@@ -413,35 +393,7 @@ if(isset($_SESSION['search_results'])){
             
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-        
-        <?php
 
-include("config.php");
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnt'])) {
-    $search_item = mysqli_real_escape_string($con, $_POST['search']);
-    $select_item = mysqli_query($con, "SELECT * FROM products WHERE Product_name LIKE '%{$search_item}%'") or die("query failed");
-
-    if ($select_item->num_rows !== 0) {
-        $search_results = array();
-
-        while ($row = $select_item->fetch_assoc()) {
-            $search_results[] = array(
-                'product_img' => $row['Product_img'],
-                'Product_name' => $row['Product_name'],
-                'Price' => $row['Price']
-            );
-        }
-        $_SESSION['search_results'] = $search_results;
-        header("location: search.php");
-        exit;
-    } else {
-        echo "Item not found";
-        // Add the following line to unset the session variable
-        unset($_SESSION['search_results']);
-    }
-}
-?>
  
             <form action="" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">

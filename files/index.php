@@ -1,4 +1,18 @@
-<?php session_start(); ?>
+<?php 
+session_start();
+include("config.php");
+
+if (isset($_SESSION['username'])) {
+    $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
+    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->execute();
+    $cart_sum = $stmt->get_result();
+    $Cart_number = $cart_sum->num_rows;
+}
+
+    
+ ?>
+ 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -89,15 +103,14 @@
                         <div class="main-nav__main-navigation">
                             <ul class=" main-nav__navigation-box">
                                 <li class="dropdown current">
-                                    <a href="index.html">Home</a>
+                                    <a href="index.php">Home</a>
                                   
                                 </li>
                                 <li class="dropdown">
-                                    <a href="product.html">Shop</a>
+                                    <a href="product.php">Shop</a>
                                     <ul>
-                                        <li><a href="product-detail.html">Product Detail</a></li>
-                                        <li><a href="cart.html">Cart</a></li>
-                                        <li><a href="checkout.html">Checkout</a></li>
+                                        <li><a href="cart.php">Cart</a></li>
+                                        <li><a href="checkout.php">Checkout</a></li>
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
@@ -125,6 +138,7 @@
                             <div class="icon_cart_box">
                                 <?php
                                 if(isset($_SESSION['username'])){
+                                    
                                     echo"<div class='usern'>{$_SESSION['email']}</div>
                                      <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
                                 }else{
@@ -133,8 +147,10 @@
                                 ?>
                             </div>
                             <div class="icon_cart_box">
+                                
                             <a href="cart.html">
-                                    <sup>2</sup><span class="icon-shopping-cart"></span>
+                            
+                                    <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
                                   </a>
                             </div>
                         </div>
@@ -814,39 +830,11 @@
             <div class="cursor-follower"></div>
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-        <?php
-
-include("config.php");
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnt'])) {
-    $search_item = mysqli_real_escape_string($con, $_POST['search']);
-    $select_item = mysqli_query($con, "SELECT * FROM products WHERE Product_name LIKE '%{$search_item}%'") or die("query failed");
-
-    if ($select_item->num_rows !== 0) {
-        $search_results = array();
-
-        while ($row = $select_item->fetch_assoc()) {
-            $search_results[] = array(
-                'product_img' => $row['Product_img'],
-                'Product_name' => $row['Product_name'],
-                'Price' => $row['Price']
-            );
-        }
-        $_SESSION['search_results'] = $search_results;
-        header("location: search.php");
-        exit;
-    } else {
-        echo "Item not found";
-        // Add the following line to unset the session variable
-        unset($_SESSION['search_results']);
-    }
-}
-?>
- 
-            <form action="#" class="search-popup__form">
+             <form action="search.php" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <button name= "btnt" type="submit"><i class="fa fa-search"></i></button>
             </form>
+            
         </div>
     </div>
 

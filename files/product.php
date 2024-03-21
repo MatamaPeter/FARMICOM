@@ -237,18 +237,7 @@
                     <!--End Sidebar Wrapper-->
                     <div class="col-xl-9 col-lg-9">
                         <div class="product-items">
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <div class="showing-result-shorting">
-                                        <div class="left">
-                                            <div class="showing">
-                                                <p>Showing 1-9 of 20 Results</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            </div>
+                            
                             <div class="all_products">
                                 <div class="row">
                                     <div class="col-xl-4 col-lg-4 col-md-6">
