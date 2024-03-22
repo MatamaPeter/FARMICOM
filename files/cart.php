@@ -1,3 +1,12 @@
+<?php
+
+include 'config.php';
+
+session_start();
+
+$username = $_SESSION['username'];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -150,6 +159,11 @@
                         <div class="cart_table_box">
                             <table class="cart_table">
                                 <thead class="cart_table_head">
+                                    <?php if(isset($_SESSION['username'])){
+                                        $username = $_SESSION['username'];
+                                        $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = $username");
+                                        while($cart_items = $select_cart->fetch_assoc()){
+                                    ?>
                                     <tr>
                                         <th>Item</th>
                                         <th></th>
@@ -164,52 +178,24 @@
                                         <td colspan="2">
                                             <div class="colum_box">
                                                 <div class="prod_thum">
-                                                    <a href="#"><img src="assets/images/shop/cart_product_img-1.jpg"
+                                                    <a href="#"><img src="<?php echo $select_cart['image'] ?>"
                                                             alt=""></a>
                                                 </div>
                                                 <div class="title">
-                                                    <h3 class="prod-title">Basket full of vegetables</h3>
+                                                    <h3 class="prod-title"><?php echo $select_cart['name'] ?></h3>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="pro_price">KES 300.00</td>
+                                        <td class="pro_price">KES <?php echo $select_cart['price'] ?></td>
                                         <td class="pro_qty">
                                             <div class="product-quantity-box">
                                                 <div class="input-box">
-                                                    <input class="quantity-spinner" type="text" value="1"
+                                                    <input class="quantity-spinner" type="text" value="<?php echo $select_cart['quantity'] ?>"
                                                         name="quantity">
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="pro_sub_total">KES 300.00</td>
-                                        <td>
-                                            <div class="pro_remove">
-                                                <i class="fas fa-times"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div class="colum_box">
-                                                <div class="prod_thum">
-                                                    <a href="#"><img src="assets/images/shop/cart_product_img-2.jpg"
-                                                            alt=""></a>
-                                                </div>
-                                                <div class="title">
-                                                    <h3 class="prod-title">Oranges</h3>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="pro_price">KES 15.00</td>
-                                        <td class="pro_qty">
-                                            <div class="product-quantity-box">
-                                                <div class="input-box">
-                                                    <input class="quantity-spinner" type="text" value="1"
-                                                        name="quantity">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="pro_sub_total">KES 15.00</td>
+                                        <td class="pro_sub_total">KES <?php echo $sub_total = ($fetch_cart['quantity'] * $fetch_cart['price']); ?></td>
                                         <td>
                                             <div class="pro_remove">
                                                 <i class="fas fa-times"></i>
@@ -218,36 +204,35 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <?php }}else{echo "Cart is empty";} ?>
                         </div>
                     </div>
                 </div>
                 <div class="row cart_apply_coupon_box">
-                    <div class="col-xl-6">
-                        <div class="apply_coupon">
-                            <div class="apply_coupon_input_box">
-                                <input type="text" name="coupon-code" value="" placeholder="Enter Coupon Code">
-                            </div>
-                            <div class="apply-coupon-button">
-                                <button class="thm-btn" type="submit">Apply Coupon</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-6">
-                        <ul class="total_box list-unstyled">
-                            <li><span>Subtotal</span>KES 300.00 </li>
-                            <li><span>Shipping Cost</span>KES 0.00 </li>
-                            <li><span>Total</span>KES 315.00 </li>
-                        </ul>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="button_box">
-                            <button class="thm-btn update_btn" type="button">Update</button>
-                            <button class="thm-btn checkout_btn" type="button">Checkout</button>
+                            <button class="thm-btn update_btn" type="button" name="update">Update</button>
+                            <button class="thm-btn checkout_btn" type="button" name="checkout">Checkout</button>
                         </div>
                     </div>
                 </div>
+                    <div class="col-xl-6">
+                        <ul class="total_box list-unstyled">
+                            <li><span>Subtotal</span>KES <?php $subtotal += $sub_total; ?></li>
+                            <li><span>Shipping Cost</span>
+                            <?php if($subtotal >= 5000){
+                               $Shipping_cost = 0;}
+                               else {
+                                $Shipping_cost = 200;
+                               }
+                               echo "KES". $Shipping_cost;
+                                ?></li>
+                            <li><span>Total</span><?php $gtotal = $subtotal + $Shipping_cost?> </li>
+                        </ul>
+                    </div>
+                </div>
+                
             </div>
         </section>
 

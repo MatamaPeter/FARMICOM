@@ -116,7 +116,7 @@ if (isset($_SESSION['username'])) {
                                 
                                                          
                                 <li class="dropdown">
-                                    <a href="about.html">About Us</a>
+                                    <a href="about.php">About Us</a>
                                     <ul>
                                         <li><a href="why_choose_us.html">Why Choose Us</a></li>
                                         
@@ -124,10 +124,10 @@ if (isset($_SESSION['username'])) {
                                 </li>
                                 
                                 <li>
-                                    <a href="contact.html">Contacts</a>
+                                    <a href="contact.php">Contacts</a>
                                 </li>
                                 <li>
-                                    <a href="farmers.html">Farmers</a>
+                                    <a href="farmers.php">Farmers</a>
                                 </li>
 
                             </ul>

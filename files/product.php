@@ -1,4 +1,41 @@
-<?php session_start();?>
+<?php 
+session_start();
+
+include("config.php");
+
+if(!isset($_SESSION['username'])){
+ header("location:lform.php");
+}else{
+    $username = $_SESSION['username'];
+}
+
+
+$product_name = isset($_POST['product_name']) ? $_POST['product_name'] : '';
+$price = isset($_POST['price']) ? $_POST['price'] : '';
+$product_image = isset($_POST['product_image']) ? $_POST['product_image'] : '';
+ 
+
+ $check_cart_numbers = mysqli_query($con, "SELECT * FROM `cart` WHERE name = '$product_name' AND username = '$username'") or die('query failed');
+
+ if(mysqli_num_rows($check_cart_numbers) > 0){
+    $message[] = 'already added to cart!';
+ }else{
+    mysqli_query($con, "INSERT INTO `cart`(username, name, price, image) VALUES('$username', '$product_name', '$price', '$product_image')") or die('query failed');
+    $message[] = 'product added to cart!';
+ }
+
+
+if (isset($_SESSION['username'])) {
+    $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
+    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->execute();
+    $cart_sum = $stmt->get_result();
+    $Cart_number = $cart_sum->num_rows;
+}else{
+    $Cart_number = 0;
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -90,32 +127,32 @@
                             <div class="main-nav__main-navigation">
                                 <ul class=" main-nav__navigation-box">
                                     <li >
-                                        <a href="index.html">Home</a>
+                                        <a href="index.php">Home</a>
                                       
                                     </li>
                                     <li class="dropdown current">
-                                        <a href="product.html">Shop</a>
+                                        <a href="product.php">Shop</a>
                                         <ul>
                                             
-                                            <li><a href="cart.html">Cart</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li>
+                                            <li><a href="cart.php">Cart</a></li>
+                                            <li><a href="checkout.php">Checkout</a></li>
                                         </ul><!-- /.sub-menu -->
                                     </li>
                                     
                                                              
                                     <li class="dropdown">
-                                        <a href="about.html">About Us</a>
+                                        <a href="about.php">About Us</a>
                                         <ul>
-                                            <li><a href="why_choose_us.html">Why Choose Us</a></li>
+                                            <li><a href="why_choose_us.php">Why Choose Us</a></li>
                                             
                                         </ul><!-- /.sub-menu -->
                                     </li>
                                     
                                     <li>
-                                        <a href="contact.html">Contacts</a>
+                                        <a href="contact.php">Contacts</a>
                                     </li>
                                     <li>
-                                        <a href="farmers.html">Farmers</a>
+                                        <a href="farmers.php">Farmers</a>
                                     </li>
 
                                 </ul>
@@ -134,8 +171,8 @@
                                     ?>
                                 </div>
                                 <div class="icon_cart_box">
-                                  <a href="cart.html">
-                                    <sup>2</sup><span class="icon-shopping-cart"></span>
+                                  <a href="cart.php">
+                                    <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
                                   </a>
                                 </div>
                                 
@@ -149,7 +186,7 @@
             <div class="container">
                 <h2>Products</h2>
                 <ul class="thm-breadcrumb list-unstyled">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li><a href="" class="shop_style">Shop</a></li>
                     <li><span>Products</span></li>
                 </ul>
@@ -165,9 +202,9 @@
                             <div class="single-sidebar wow fadeInUp animated" data-wow-delay="0.1s"
                                 data-wow-duration="1200ms">
                                 <div class="sidebar-search-box">
-                                    <form class="search-form" action="#">
-                                        <input placeholder="Search" type="text">
-                                        <button type="submit"><i class="icon-magnifying-glass"
+                                    <form class="search-form" action="search.php" method="post">
+                                        <input name ="search" placeholder="Search" type="text">
+                                        <button name="btnt" type="submit"><i class="icon-magnifying-glass"
                                                 aria-hidden="true"></i></button>
                                     </form>
                                 </div>
@@ -178,15 +215,16 @@
                             <div class="single-sidebar wow fadeInUp animated" data-wow-delay="0.3s"
                                 data-wow-duration="1200ms">
                                 <div class="categories-box">
+                                   
                                     <div class="title">
                                         <h3>Categories</h3>
                                     </div>
                                     <ul class="categories clearfix">
-                                        <li><a href="#">Vegetables</a></li>
-                                        <li><a href="#">Fruit Basket</a></li>
-                                        <li><a href="#">Dairy Products</a></li>
-                                        <li><a href="#">Tomatoes</a></li>
-                                        <li><a href="#">Oranges</a></li>
+                                    <?php $Select_categories = mysqli_query($con,"SELECT * FROM category") or die("Query failed");
+                                    while ($cat_itm = $Select_categories->fetch_assoc()){
+                                        ?>
+                                        <li><a href="#"><?php echo $cat_itm['Category']?></a></li>
+                                        <?php } ?>
                                     </ul>
                                 </div>
                             </div>
@@ -199,34 +237,27 @@
                                         <h3>Latest Products</h3>
                                     </div>
                                     <ul class="top-products">
+                                    <?php
+                                
+                                $select_products = mysqli_query($con, "SELECT * FROM `products` LIMIT 3") or die('query failed');
+                                     if(mysqli_num_rows($select_products) > 0){
+                                      while($fetch_products = mysqli_fetch_assoc($select_products)){
+                                        ?>
                                         <li>
                                             <div class="product_item">
                                                 <div class="img-box">
-                                                    <img src="assets/images/shop/top-product-1.jpg" alt="Awesome Image">
+                                                    <img src="<?php echo $fetch_products['Product_img'];?>" alt="">
                                                     <div class="overlay-content">
                                                         <a href="#"><i class="fa fa-link" aria-hidden="true"></i></a>
                                                     </div>
                                                 </div>
                                                 <div class="title-box">
-                                                    <h4><a href="#">Wheat Bag</a></h4>
-                                                    <div class="value"> KES 999.00</div>
+                                                    <h4><a href="#">"<?php echo $fetch_products['Product_name'];?>"</a></h4>
+                                                    <div class="value"> KES "<?php echo $fetch_products['Price'];?>"</div>
                                                 </div>
                                             </div>
                                         </li>
-                                        <li>
-                                            <div class="product_item">
-                                                <div class="img-box">
-                                                    <img src="assets/images/shop/top-product-2.jpg" alt="Awesome Image">
-                                                    <div class="overlay-content">
-                                                        <a href="#"><i class="fa fa-link" aria-hidden="true"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="title-box">
-                                                    <h4><a href="#">Pinepale</a></h4>
-                                                    <div class="value">KES 85.00</div>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        <?php } }?>
                                     </ul>
                                 </div>
                             </div>
@@ -239,133 +270,44 @@
                         <div class="product-items">
                             
                             <div class="all_products">
+                            
+        
                                 <div class="row">
+                            
+                                <?php 
+                                
+                                $select_products = mysqli_query($con, "SELECT * FROM `products`") or die('query failed');
+                                if(mysqli_num_rows($select_products) > 0){
+                                   while($fetch_products = mysqli_fetch_assoc($select_products)){
+                                 ?>
                                     <div class="col-xl-4 col-lg-4 col-md-6">
                                         <div class="all_products_single text-center">
                                             <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_1.jpg" alt="">
+                                            <form id="productForm" action="" method="POST" enctype="multipart/form-data">
+                                                <img src="assets/images/shop/cart_product_img-1.jpg" alt="">
                                                 <div class="all_product_hover">
                                                     <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
+                                                    <a href="#" id="addToCartLink"><span class="icon-shopping-cart"> <h6><?php foreach ($message as $msg): ?>
+                                                     <?php echo $msg . "<br>"; ?>
+                                                    <?php endforeach; ?></span></h6></a>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <h4>tomatoes</h4>
-                                            <p>KES 90.00</p>
+                                            <h4><?php echo $fetch_products['Product_name']; ?></h4>
+                                            <p><?php echo $fetch_products['Price']; ?></p>
+                                            <input type="hidden" name="product_name" value="<?php echo $fetch_products['Product_name']; ?>">
+                                            <input type="hidden" name="price" value="<?php echo $fetch_products['Price']; ?>">
+                                            <input type="hidden" name="product_image" value="<?php echo $fetch_products['Product_img']; ?>">
+                                   </form>
                                         </div>
                                     </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_2.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">Chinese cabbage</a></h4>
-                                            <p>KES 40.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_3.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">Basket full of vegetables</a></h4>
-                                            <p>KES 300.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_4.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">Strawberry</a></h4>
-                                            <p>KES 150.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_5.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">Green and red grape</a></h4>
-                                            <p>KES 90.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_6.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">Kiwi</a></h4>
-                                            <p>KES 80.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_7.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">Oranges</a></h4>
-                                            <p>KES 10.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_8.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">Chili pepper</a></h4>
-                                            <p>KES 30.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-6">
-                                        <div class="all_products_single text-center">
-                                            <div class="all_product_item_image">
-                                                <img src="assets/images/shop/shop_product_9.jpg" alt="">
-                                                <div class="all_product_hover">
-                                                    <div class="all_product_icon">
-                                                        <a href="cart.html"><span class="icon-shopping-cart"></span></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h4><a href="product-detail.html">lemons</a></h4>
-                                            <p>KES 10.00</p>
-                                        </div>
-                                    </div>
+                                    <?php
+                                      }
+                                      }else{
+                                      echo "no products added yet!";
+                                         }
+                                            ?>
+                                            
                                 </div>
                             </div>
                         </div>
@@ -529,6 +471,12 @@
     <script src="assets/js/isotope.js"></script>
     <script src="assets/js/appear.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
+    <script>
+    document.getElementById('addToCartLink').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+        document.getElementById('productForm').submit(); // Submit the form
+    });
+</script>
 
     <!-- template scripts -->
     <script src="assets/js/theme.js"></script>
