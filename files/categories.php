@@ -1,33 +1,42 @@
-<?php session_start(); 
+<?php 
+session_start();
 
 include("config.php");
-unset($_SESSION['search_results']);
-if (isset($_POST['btnt'])) {
-    $search_item = mysqli_real_escape_string($con, $_POST['search']);
-    $select_item = mysqli_query($con, "SELECT * FROM products WHERE Product_name LIKE '%{$search_item}%'") or die("Query failed");
 
-    if ($select_item->num_rows > 0) {
-        $search_results = array();
+$username = $_SESSION['username'];
 
-        while ($row = $select_item->fetch_assoc()) {
-            $search_results[] = array(
-                'product_img' => $row['Product_img'],
-                'Product_name' => $row['Product_name'],
-                'Price' => $row['Price']
-            );
-        }
-        $_SESSION['search_results'] = $search_results;
-        
-    } 
-}
 if (isset($_SESSION['username'])) {
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
     $stmt->bind_param("s", $_SESSION['username']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
-}else{$Cart_number=0;}
-     
+}else{
+    $Cart_number = 0;
+}
+
+if (isset($_POST['cat_submit'])) {
+    $cat_item = mysqli_real_escape_string($con, $_POST['cat_submit']);
+    $fetch_cat_item = mysqli_query($con, "SELECT * FROM products WHERE Product_category = '$cat_item'") or die("Query failed");
+    
+    if ($fetch_cat_item->num_rows > 0) {
+        $cat_results = array();
+
+        while ($row = $fetch_cat_item->fetch_assoc()) {
+            
+            $cat_results[] = array(
+                'Product_img' => $row['Product_img'],
+                'Product_name' => $row['Product_name'],
+                'Price' => $row['Price'],
+                'Product_category' => $row['Product_category']
+            );
+        }
+        $_SESSION['cate_select'] = $cat_results;
+        
+    } 
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -79,17 +88,40 @@ if (isset($_SESSION['username'])) {
         <div class="page-wrapper">
     
     
-            
+            <div class="site-header__header-one-wrap">
+    
+                <div class="topbar-one">
+                    <div class="topbar_bg" style="background-image: url(assets/images/shapes/header-bg.png)"></div>
+                    <div class="container">
+                        <div class="topbar-one__left">
+                            <a href="mail to: info@farmicom.com"><span class="icon-message"></span>info@farmicom.com</a>
+                            <a href="+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
+                        </div>
+                        <div class="topbar-one__middle">
+                            <a href="index.php" class="main-nav__logo">
+                                <img src="assets/images/resources/logo.png" class="main-logo" alt="Awesome Image" />
+                            </a>
+                        </div>
+                        <div class="topbar-one__right">
+                            <div class="topbar-one__social">
+                                <a href="#"><i class="fab fa-facebook-square"></i></a>
+                                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+                                    <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                                  </svg></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-dribbble"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
     
                 <header class="main-nav__header-one">
                     <nav class="header-navigation stricky">
                         <div class="container clearfix">
                             <!-- Brand and toggle get grouped for better mobile display -->
                             <div class="main-nav__left">
-                               
                                 <a href="#" class="main-nav__search search-popup__toggler"><i
                                         class="icon-magnifying-glass"></i></a>
-                                       
                                 <a href="#" class="side-menu__toggler">
                                     <i class="fa fa-bars"></i>
                                 </a>
@@ -141,10 +173,9 @@ if (isset($_SESSION['username'])) {
                                     ?>
                                 </div>
                                 <div class="icon_cart_box">
-                                <a href="cart.php">
-                            
-                            <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
-                          </a>
+                                  <a href="cart.php">
+                                    <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
+                                  </a>
                                 </div>
                                 
                               </div>
@@ -152,6 +183,18 @@ if (isset($_SESSION['username'])) {
                     </nav>
                 </header>
             </div>
+
+        <section class="page-header" style="background-image: url(assets/images/backgrounds/page-header-contact.jpg);">
+            <div class="container">
+                <h2>Products</h2>
+                <ul class="thm-breadcrumb list-unstyled">
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="" class="shop_style">Shop</a></li>
+                    <li><span>Products</span></li>
+                </ul>
+            </div>
+        </section>
+
         <section class="product">
             <div class="container">
                 <div class="row">
@@ -173,22 +216,22 @@ if (isset($_SESSION['username'])) {
                             <div class="single-sidebar wow fadeInUp animated" data-wow-delay="0.3s"
                                 data-wow-duration="1200ms">
                                 <div class="categories-box">
+                                   
                                     <div class="title">
-                                        <h3>Categories</h3>
+                                        <h3>Selected Categories</h3>
                                     </div>
                                     <ul class="categories clearfix">
-                                    <form action="categories.php" method="post">
-                <?php 
-                $Select_categories = mysqli_query($con,"SELECT * FROM category") or die("Query failed");
-                while ($cat_itm = $Select_categories->fetch_assoc()) {
-                ?>
-                <li>
-                    <button type="submit" class="btn_delete" name="cat_submit" value="<?php echo $cat_itm['Category']; ?>">
-                        <?php echo $cat_itm['Category']; ?>
-                    </button>
-                </li>
-                <?php } ?>
-            </form>
+                                    <?php 
+                                    if (isset($_SESSION['cate_select'])): 
+                                    foreach ($_SESSION['cate_select'] as $result):
+                                        $productName = $result['Product_category'];
+                                    $Select_categories = mysqli_query($con,"SELECT * FROM category WHERE Category = '$productName'") or die("Query failed");
+                                    while ($cat_itm = $Select_categories->fetch_assoc()){
+                                        ?>
+                                        <li><a href="#"><?php echo $cat_itm['Category']?></a></li>
+                                        
+                                        <?php } endforeach; endif;?>
+                                        <li><a href="product.php"><button class="all_categories">All Categories</button></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -232,40 +275,42 @@ if (isset($_SESSION['username'])) {
                     <!--End Sidebar Wrapper-->
                     <div class="col-xl-9 col-lg-9">
                         <div class="product-items">
-                           
-                        
-                        <div class="all_products">
-                                <div class="row">
-                                    
-                                
-                                <?php if (isset($_SESSION['search_results'])): 
-            foreach ($_SESSION['search_results'] as $result):
-            ?>
+                            
+                            <div class="all_products">
+                            
         
-        <div class="col-xl-4 col-lg-4 col-md-6">
-            <div class="all_products_single text-center">
-                <div class="all_product_item_image">
-                   <img src="<?php echo $result['product_img']; ?>" alt="">
-                    <div class="all_product_hover">
-                        <div class="all_product_icon">
-                            <a href="cart.php"><span class="icon-shopping-cart"></span></a>
-                        </div>
-                    </div>
-                </div>
-                <h4><?php echo $result['Product_name'];?></h4>
-                <p><?php echo $result['Price'];?></p>
-                <?php endforeach; ?>
+                                <div class="row">
+                            
+                                <?php 
+                                
+                                if (isset($_SESSION['cate_select'])): 
+                                    foreach ($_SESSION['cate_select'] as $result):
+                                 ?>
+                                    <div class="col-xl-4 col-lg-4 col-md-6">
+                                        <div class="all_products_single text-center">
+                                            <div class="all_product_item_image">
+                                        <form id="productForm" action="addToCart.php" method="POST" enctype="multipart/form-data">
+                                                <img src="assets/images/shop/cart_product_img-1.jpg" alt="">
+                                                <div class="all_product_hover">
+                                                    <div class="all_product_icon">
+                                                    <a href="#" id="addToCartLink"><span class="icon-shopping-cart"> </span></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <h4><?php echo $result['Product_name']; ?></h4>
+                                            <p><?php echo $result['Price']; ?></p>
+                                            <input type="hidden" name="product_name" value="<?php echo $result['Product_name']; ?>">
+                                            <input type="hidden" name="price" value="<?php echo $result['Price']; ?>">
+                                            <input type="hidden" name="product_image" value="<?php echo $result['Product_img']; ?>">
+                                   </form>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
                 <?php else: ?>
-                 <p>No results found</p>
+                 <p>No items under this category yet</p>
                 <?php endif; ?>
-                
-            </div>
-        </div>
-        <?php
-    
- 
-?>
-
+                                            
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -408,24 +453,22 @@ if (isset($_SESSION['username'])) {
         </div><!-- /.side-menu__block-inner -->
     </div><!-- /.side-menu__block -->
 
-    
-    <div class="search-popup">
+
+
+    <    <div class="search-popup">
         <div class="search-popup__overlay custom-cursor__overlay">
-            
             <div class="cursor"></div>
             <div class="cursor-follower"></div>
-            
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-
- 
-            <form action="" class="search-popup__form" method="post">
+             <form action="search.php" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">
-                <button type="submit" name="btnt"><i class="fa fa-search"></i></button>
+                <button name= "btnt" type="submit"><i class="fa fa-search"></i></button>
             </form>
-    
-        </div><!-- /.search-popup__inner -->
-    </div><!-- /.search-popup -->
+            
+        </div>
+    </div>
+
 
 
     <script src="assets/js/jquery.min.js"></script>
@@ -449,6 +492,29 @@ if (isset($_SESSION['username'])) {
     <script src="assets/js/isotope.js"></script>
     <script src="assets/js/appear.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
+    <script>
+    $(document).ready(function() {
+    $(document).on('click', '#addToCartLink', function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+
+        var form = $(this).closest('form'); // Get the closest form element
+        var formData = form.serialize(); // Serialize the form data
+
+        $.ajax({
+            type: 'POST',
+            url: 'addToCart.php',
+            data: formData,
+            success: function(response) {
+                window.location.href = window.location.href;
+                alert(response);
+            },
+            error: function() {
+                alert('An error occurred while adding the product to the cart.');
+            }
+        });
+    });
+});
+</script>
 
     <!-- template scripts -->
     <script src="assets/js/theme.js"></script>

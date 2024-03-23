@@ -6,6 +6,44 @@ session_start();
 
 $username = $_SESSION['username'];
 
+if (isset($_SESSION['username'])) {
+    $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
+    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->execute();
+    $cart_sum = $stmt->get_result();
+    $Cart_number = $cart_sum->num_rows;
+}else{$Cart_number=0;}
+
+if (isset($_POST['update'])) {
+    if (isset($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+      
+        foreach ($_POST['cart_id'] as $key => $cartId) {
+            $quantity = $_POST['quantity'][$cartId];
+            $update_query = mysqli_query($con, "UPDATE cart SET quantity = '$quantity' WHERE id = '$cartId' AND username = '$username'");
+        }
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+}
+// Check if the delete button is clicked
+if (isset($_POST['delete'])) {
+    if (isset($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+        
+        // Retrieve cart ID of the item to be deleted
+        $cartId = $_POST['delete'];
+
+        // Construct and execute DELETE SQL query
+        $delete_query = mysqli_query($con, "DELETE FROM cart WHERE id = '$cartId' AND username = '$username'");
+        
+        // Redirect to the same page after deletion
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +104,7 @@ $username = $_SESSION['username'];
                         <a href="+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
                     </div>
                     <div class="topbar-one__middle">
-                        <a href="index.html" class="main-nav__logo">
+                        <a href="index.php" class="main-nav__logo">
                             <img src="assets/images/resources/logo.png" class="main-logo" alt="Awesome Image" />
                         </a>
                     </div>
@@ -97,34 +135,32 @@ $username = $_SESSION['username'];
                         <div class="main-nav__main-navigation">
                             <ul class=" main-nav__navigation-box">
                                 <li class="dropdown">
-                                    <a href="index.html">Home</a>
+                                    <a href="index.php">Home</a>
                                   
                                 </li>
                                 <li class="dropdown  current">
-                                    <a href="product.html">Shop</a>
+                                    <a href="product.php">Shop</a>
                                     <ul>
-                                        <li><a href="product-detail.html">Product Detail</a></li>
-                                        <li><a href="cart.html">Cart</a></li>
-                                        <li><a href="checkout.html">Checkout</a></li>
+                                        <li><a href="cart.php">Cart</a></li>
+                                        <li><a href="checkout.php">Checkout</a></li>
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
                                                          
                                 <li class="dropdown">
-                                    <a href="about.html">About Us</a>
+                                    <a href="about.php">About Us</a>
                                     <ul>
-                                        <li><a href="why_choose_us.html">Why Choose Us</a></li>
+                                        <li><a href="why_choose_us.php">Why Choose Us</a></li>
                                         
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
                                 <li>
-                                    <a href="contact.html">Contacts</a>
+                                    <a href="contact.php">Contacts</a>
                                 </li>
                                 <li>
-                                    <a href="farmers.html">Farmers</a>
+                                    <a href="farmers.php">Farmers</a>
                                 </li>
-                                <li> <a href="rform.html" class="cta_one__btn">Register with us <span style="color:rgb(255, 251, 0); font-size: 60%;"> Hot &#128293 </a></li>
 
                             </ul>
                         
@@ -132,9 +168,10 @@ $username = $_SESSION['username'];
 
                         <div class="main-nav__right">
                             <div class="icon_cart_box">
-                                <a href="cart.html">
-                                    <span class="icon-shopping-cart"></span>
-                                </a>
+                            <a href="cart.php">
+                            
+                            <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
+                          </a>
                             </div>
                         </div>
                     </div>
@@ -146,65 +183,95 @@ $username = $_SESSION['username'];
             <div class="container">
                 <h2>Cart</h2>
                 <ul class="thm-breadcrumb list-unstyled">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li><a href="" class="shop_style">Shop</a></li>
                     <li><span>Cart</span></li>
                 </ul>
             </div>
         </section>
-        <section class="cart">
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">        <section class="cart">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="cart_table_box">
-                            <table class="cart_table">
-                                <thead class="cart_table_head">
-                                    <?php if(isset($_SESSION['username'])){
-                                        $username = $_SESSION['username'];
-                                        $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = $username");
-                                        while($cart_items = $select_cart->fetch_assoc()){
-                                    ?>
-                                    <tr>
-                                        <th>Item</th>
-                                        <th></th>
-                                        <th>Price</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th>Remove</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div class="colum_box">
-                                                <div class="prod_thum">
-                                                    <a href="#"><img src="<?php echo $select_cart['image'] ?>"
-                                                            alt=""></a>
-                                                </div>
-                                                <div class="title">
-                                                    <h3 class="prod-title"><?php echo $select_cart['name'] ?></h3>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="pro_price">KES <?php echo $select_cart['price'] ?></td>
-                                        <td class="pro_qty">
-                                            <div class="product-quantity-box">
-                                                <div class="input-box">
-                                                    <input class="quantity-spinner" type="text" value="<?php echo $select_cart['quantity'] ?>"
-                                                        name="quantity">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="pro_sub_total">KES <?php echo $sub_total = ($fetch_cart['quantity'] * $fetch_cart['price']); ?></td>
-                                        <td>
-                                            <div class="pro_remove">
-                                                <i class="fas fa-times"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <?php }}else{echo "Cart is empty";} ?>
+                        <table class="cart_table">
+    <thead class="cart_table_head">
+        <?php
+    if (isset($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+        $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
+        if($select_cart->num_rows!==0){
+            ?>
+            <tr>
+                <th>Item</th>
+                <th></th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Remove</th>
+            </tr>
+    <?php 
+        }
+    } else {
+        echo "";
+    }
+    ?>
+    
+   
+                    </thead>
+                    <tbody>
+                    <?php
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
+    if($select_cart->num_rows!==0){
+    while ($cart_items = mysqli_fetch_assoc($select_cart)) {
+        
+        if (isset($cart_items['quantity']) && isset($cart_items['price'])) {
+            $subtotal = 0;
+            ?>
+                 <tr>
+                            <td colspan="2">
+                                <div class="colum_box">
+                                    <div class="prod_thum">
+                                        <a href="#"><img src="<?php echo $cart_items['image']; ?>" alt=""></a>
+                                    </div>
+                                    <div class="title">
+                                        <h3 class="prod-title"><?php echo $cart_items['name']; ?></h3>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="pro_price">KES <?php echo $cart_items['price']; ?></td>
+                <td class="pro_qty">
+                    <div class="product-quantity-box">
+                        <div class="input-box">
+                            <input type="hidden" name="cart_id[]" value="<?php echo $cart_items['id']; ?>">
+                            <input class="quantity-spinner" type="text" value="<?php echo $cart_items['quantity']; ?>" name="quantity[<?php echo $cart_items['id']; ?>]">
+                        </div>
+                    </div>
+                </td>
+                <td class="pro_sub_total">KES <?php echo $sub_total = ($cart_items['price']) * $cart_items['quantity']; ?></td>
+                <td>
+                    <div class="pro_remove">
+                    <button class="btn_delete" type="submit" name="delete" value="<?php echo $cart_items['id']; ?>"><i class="fas fa-times"></i></button>
+                    </div>
+                </td>
+            </tr>
+            <?php
+        }
+    }
+
+}
+else{
+    echo "<centre><h1>Cart is empty</h1></centre>";
+}
+}
+ else {
+    echo "Cart is empty";
+}
+?>
+
+</table>
                         </div>
                     </div>
                 </div>
@@ -212,30 +279,36 @@ $username = $_SESSION['username'];
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="button_box">
-                            <button class="thm-btn update_btn" type="button" name="update">Update</button>
-                            <button class="thm-btn checkout_btn" type="button" name="checkout">Checkout</button>
+                        <?php
+                        $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
+                         if($select_cart->num_rows!==0){
+                            ?>
+                            <button class="thm-btn update_btn" type="submit" name="update">Update</button>
+                            <button class="thm-btn checkout_btn" type="submit" name="checkout">Checkout</button>
                         </div>
                     </div>
                 </div>
                     <div class="col-xl-6">
                         <ul class="total_box list-unstyled">
-                            <li><span>Subtotal</span>KES <?php $subtotal += $sub_total; ?></li>
+                            
+                            <li><span>Subtotal</span> <?php echo "KES ". $subtotal += $sub_total; ?></li>
                             <li><span>Shipping Cost</span>
                             <?php if($subtotal >= 5000){
                                $Shipping_cost = 0;}
                                else {
-                                $Shipping_cost = 200;
+                                $Shipping_cost = round(0.45 * $subtotal, 0);
                                }
-                               echo "KES". $Shipping_cost;
+                               echo "KES ". $Shipping_cost;
                                 ?></li>
-                            <li><span>Total</span><?php $gtotal = $subtotal + $Shipping_cost?> </li>
+                            <li><span>Total</span><?php echo "KES ". $gtotal = $subtotal + $Shipping_cost?> </li>
+                        <?php }else{echo"";} ?>
                         </ul>
                     </div>
                 </div>
                 
             </div>
         </section>
-
+        </form>
         <footer class="site-footer">
             <div class="site-footer_farm_image"><img src="assets/images/resources/site-footer-farm.png"
                     alt="Farm Image"></div>
@@ -250,10 +323,27 @@ $username = $_SESSION['username'];
                                 <p>Experience elevated farming with Farmicom : where seamless online shopping, top-quality products, 
                                     and innovative solutions converge  </p>
                             </div>
-                            <form>
+                            <?php
+                                if(isset($_POST['subscribe'])){
+                                    $Email = mysqli_real_escape_string($con, $_POST['email']);
+                                    
+                                    $stmt = $con->prepare("SELECT * FROM subscriptions WHERE Email = ?");
+                                    $stmt -> bind_param("s",$Email);
+                                    $stmt -> execute();
+                                    $fetch_sub = $stmt -> get_result();
+
+                                    if($fetch_sub->num_rows!==0){
+                                        echo "<script>alert('Already subscribed');</script>";
+                                    }else{
+                                        mysqli_query($con, "INSERT INTO subscriptions (email) VALUES('$Email')");
+                                        echo "<script>alert('Subscribed successfully');</script>";
+                                    }
+                                }
+                            ?>
+                            <form action="" method="post">
                                 <div class="footer_input-box">
-                                    <input type="Email" placeholder="Email Address">
-                                    <button type="submit" class="button"><i class="fa fa-check"></i></button>
+                                    <input type="Email"  name = "email" placeholder="Email Address">
+                                    <button type="submit" name="subscribe" class="button"><i class="fa fa-check"></i></button>
                                 </div>
                             </form>
                         </div>
@@ -264,10 +354,10 @@ $username = $_SESSION['username'];
                                 <h3>Explore</h3>
                             </div>
                             <ul class="footer-widget__links-list list-unstyled">
-                                <li><a href="about.html">About Us</a></li>
-                                <li><a href="product.html">Shop with us</a></li>
-                                <li><a href="farmers.html">Meet the Farmers</a></li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="about.php">About Us</a></li>
+                                <li><a href="product.php">Shop with us</a></li>
+                                <li><a href="farmers.php">Meet the Farmers</a></li>
+                                <li><a href="contact.php">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -356,12 +446,14 @@ $username = $_SESSION['username'];
             <div class="cursor-follower"></div>
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-            <form action="#" class="search-popup__form">
+             <form action="search.php" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <button name= "btnt" type="submit"><i class="fa fa-search"></i></button>
             </form>
-        </div><!-- /.search-popup__inner -->
-    </div><!-- /.search-popup -->
+            
+        </div>
+    </div>
+
 
 
     <script src="assets/js/jquery.min.js"></script>

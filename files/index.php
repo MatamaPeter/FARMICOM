@@ -8,7 +8,7 @@ if (isset($_SESSION['username'])) {
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
-}
+}else{$Cart_number=0;}
 
     
  ?>
@@ -72,7 +72,7 @@ if (isset($_SESSION['username'])) {
                         <a href="+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
                     </div>
                     <div class="topbar-one__middle">
-                        <a href="index.html" class="main-nav__logo">
+                        <a href="index.php" class="main-nav__logo">
                             <img src="assets/images/resources/logo.png" class="main-logo" alt="Awesome Image" />
                         </a>
                     </div>
@@ -118,7 +118,7 @@ if (isset($_SESSION['username'])) {
                                 <li class="dropdown">
                                     <a href="about.php">About Us</a>
                                     <ul>
-                                        <li><a href="why_choose_us.html">Why Choose Us</a></li>
+                                        <li><a href="why_choose_us.php">Why Choose Us</a></li>
                                         
                                     </ul><!-- /.sub-menu -->
                                 </li>
@@ -148,7 +148,7 @@ if (isset($_SESSION['username'])) {
                             </div>
                             <div class="icon_cart_box">
                                 
-                            <a href="cart.html">
+                            <a href="cart.php">
                             
                                     <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
                                   </a>
@@ -174,7 +174,7 @@ if (isset($_SESSION['username'])) {
                                     <div class="sub-title">The best Agriculture products</div>
                                     <h1>Welcome<br> to Farmicom </h1>
                                     <div class="link-box">
-                                        <a href="product.html" class="thm-btn">Shop with us</a>
+                                        <a href="product.php" class="thm-btn">Shop with us</a>
                                     </div>
                                 </div>
                             </div>
@@ -192,7 +192,7 @@ if (isset($_SESSION['username'])) {
                                     <div class="sub-title">The best Agriculture products</div>
                                     <h1>The best online<br> farming store</h1>
                                     <div class="link-box">
-                                        <a href="product.html" class="thm-btn">Shop with us</a>
+                                        <a href="product.php" class="thm-btn">Shop with us</a>
                                     </div>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@ if (isset($_SESSION['username'])) {
                                     <div class="sub-title">The best Agriculture products</div>
                                     <h1>With quality<br> organic products</h1>
                                     <div class="link-box">
-                                        <a href="product.html" class="thm-btn">Shop with us</a>
+                                        <a href="product.php" class="thm-btn">Shop with us</a>
                                     </div>
                                 </div>
                             </div>
@@ -275,7 +275,7 @@ if (isset($_SESSION['username'])) {
                                     platform for farmers, agribusinesses, and enthusiasts alike..</p>
                             </div>
                             <div class="about1__button-block">
-                                <a href="about.html" class="thm-btn about_one__btn">Learn More</a>
+                                <a href="about.php" class="thm-btn about_one__btn">Learn More</a>
                             </div>
                         </div>
                     </div>
@@ -302,7 +302,7 @@ if (isset($_SESSION['username'])) {
                             <div class="service_1_img">
                                 <img src="assets/images/service/service-1-img-1.jpg" alt="Service Image">
                                 <div class="hover_box">
-                                    <a href="product.html"><span class="icon-left-arrow"></span></a>
+                                    <a href="product.php"><span class="icon-left-arrow"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +316,7 @@ if (isset($_SESSION['username'])) {
                             <div class="service_1_img">
                                 <img src="assets/images/service/service-1-img-2.jpg" alt="Service Image">
                                 <div class="hover_box">
-                                    <a href="product.html"><span class="icon-left-arrow"></span></a>
+                                    <a href="product.php"><span class="icon-left-arrow"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -330,7 +330,7 @@ if (isset($_SESSION['username'])) {
                             <div class="service_1_img">
                                 <img src="assets/images/service/service-1-img-3.jpg" alt="Service Image">
                                 <div class="hover_box">
-                                    <a href="product.html"><span class="icon-left-arrow"></span></a>
+                                    <a href="product.php"><span class="icon-left-arrow"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -344,7 +344,7 @@ if (isset($_SESSION['username'])) {
                             <div class="service_1_img">
                                 <img src="assets/images/service/service-1-img-4.jpg" alt="Service Image">
                                 <div class="hover_box">
-                                    <a href="product.html"><span class="icon-left-arrow"></span></a>
+                                    <a href="product.php"><span class="icon-left-arrow"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -527,7 +527,7 @@ if (isset($_SESSION['username'])) {
                                     <h3>organic<br>solutions</h3>
                                 </div>
                                 <div class="hover_box">
-                                    <a href="about.html"><span class="icon-left-arrow"></span></a>
+                                    <a href="about.php"><span class="icon-left-arrow"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -540,7 +540,7 @@ if (isset($_SESSION['username'])) {
                                     <h3>Harvest<br>Innovations</h3>
                                 </div>
                                 <div class="hover_box">
-                                    <a href="about.html"><span class="icon-left-arrow"></span></a>
+                                    <a href="about.php"><span class="icon-left-arrow"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -553,7 +553,7 @@ if (isset($_SESSION['username'])) {
                                     <h3>Agriculture<br>farming</h3>
                                 </div>
                                 <div class="hover_box">
-                                    <a href="about.html"><span class="icon-left-arrow"></span></a>
+                                    <a href="about.php"><span class="icon-left-arrow"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -700,7 +700,7 @@ if (isset($_SESSION['username'])) {
                             <h1>Provide you the Highest Quality products<br>that Meets your Expectation</h1>
                             <p>a holistic farming experience designed for success and collaboration.</p>
                             <div class="cta_one__button-block">
-                                <a href="about.html" class="thm-btn cta_one__btn">Discover More</a>
+                                <a href="about.php" class="thm-btn cta_one__btn">Discover More</a>
                             </div>
                         </div>
                     </div>
@@ -722,12 +722,30 @@ if (isset($_SESSION['username'])) {
                                 <p>Experience elevated farming with Farmicom : where seamless online shopping, top-quality products, 
                                     and innovative solutions converge  </p>
                             </div>
-                            <form>
+                            <?php
+                                if(isset($_POST['subscribe'])){
+                                    $Email = mysqli_real_escape_string($con, $_POST['email']);
+                                    
+                                    $stmt = $con->prepare("SELECT * FROM subscriptions WHERE Email = ?");
+                                    $stmt -> bind_param("s",$Email);
+                                    $stmt -> execute();
+                                    $fetch_sub = $stmt -> get_result();
+
+                                    if($fetch_sub->num_rows!==0){
+                                        echo "<script>alert('Already subscribed');</script>";
+                                    }else{
+                                        mysqli_query($con, "INSERT INTO subscriptions (email) VALUES('$Email')");
+                                        echo "<script>alert('Subscribed successfully');</script>";
+                                    }
+                                }
+                            ?>
+                            <form action="" method="post">
                                 <div class="footer_input-box">
-                                    <input type="Email" placeholder="Email Address">
-                                    <button type="submit" class="button"><i class="fa fa-check"></i></button>
+                                    <input type="Email"  name = "email" placeholder="Email Address">
+                                    <button type="submit" name="subscribe" class="button"><i class="fa fa-check"></i></button>
                                 </div>
                             </form>
+                            
                         </div>
                     </div>
                     <div class="col-xl-2 col-lg-2 col-md-6">
@@ -736,10 +754,10 @@ if (isset($_SESSION['username'])) {
                                 <h3>Explore</h3>
                             </div>
                             <ul class="footer-widget__links-list list-unstyled">
-                                <li><a href="about.html">About Us</a></li>
-                                <li><a href="product.html">Shop with us</a></li>
-                                <li><a href="farmers.html">Meet the Farmers</a></li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="about.php">About Us</a></li>
+                                <li><a href="product.php">Shop with us</a></li>
+                                <li><a href="farmers.php">Meet the Farmers</a></li>
+                                <li><a href="contact.php">Contact</a></li>
                             </ul>
                         </div>
                     </div>

@@ -3,27 +3,7 @@ session_start();
 
 include("config.php");
 
-if(!isset($_SESSION['username'])){
- header("location:lform.php");
-}else{
-    $username = $_SESSION['username'];
-}
-
-
-$product_name = isset($_POST['product_name']) ? $_POST['product_name'] : '';
-$price = isset($_POST['price']) ? $_POST['price'] : '';
-$product_image = isset($_POST['product_image']) ? $_POST['product_image'] : '';
- 
-
- $check_cart_numbers = mysqli_query($con, "SELECT * FROM `cart` WHERE name = '$product_name' AND username = '$username'") or die('query failed');
-
- if(mysqli_num_rows($check_cart_numbers) > 0){
-    $message[] = 'already added to cart!';
- }else{
-    mysqli_query($con, "INSERT INTO `cart`(username, name, price, image) VALUES('$username', '$product_name', '$price', '$product_image')") or die('query failed');
-    $message[] = 'product added to cart!';
- }
-
+$username = $_SESSION['username'];
 
 if (isset($_SESSION['username'])) {
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
@@ -96,7 +76,7 @@ if (isset($_SESSION['username'])) {
                             <a href="+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
                         </div>
                         <div class="topbar-one__middle">
-                            <a href="index.html" class="main-nav__logo">
+                            <a href="index.php" class="main-nav__logo">
                                 <img src="assets/images/resources/logo.png" class="main-logo" alt="Awesome Image" />
                             </a>
                         </div>
@@ -203,9 +183,8 @@ if (isset($_SESSION['username'])) {
                                 data-wow-duration="1200ms">
                                 <div class="sidebar-search-box">
                                     <form class="search-form" action="search.php" method="post">
-                                        <input name ="search" placeholder="Search" type="text">
-                                        <button name="btnt" type="submit"><i class="icon-magnifying-glass"
-                                                aria-hidden="true"></i></button>
+                                        <input name ="search"  type="text" cursor="arrow" readonly>
+                                        
                                     </form>
                                 </div>
                             </div>
@@ -213,21 +192,29 @@ if (isset($_SESSION['username'])) {
                             
                             <!--Start sidebar categories Box-->
                             <div class="single-sidebar wow fadeInUp animated" data-wow-delay="0.3s"
-                                data-wow-duration="1200ms">
-                                <div class="categories-box">
-                                   
-                                    <div class="title">
-                                        <h3>Categories</h3>
-                                    </div>
-                                    <ul class="categories clearfix">
-                                    <?php $Select_categories = mysqli_query($con,"SELECT * FROM category") or die("Query failed");
-                                    while ($cat_itm = $Select_categories->fetch_assoc()){
-                                        ?>
-                                        <li><a href="#"><?php echo $cat_itm['Category']?></a></li>
-                                        <?php } ?>
-                                    </ul>
-                                </div>
-                            </div>
+    data-wow-duration="1200ms">
+    <div class="categories-box">
+
+        <div class="title">
+            <h3>Categories</h3>
+        </div>
+        <ul class="categories clearfix">
+            <form action="categories.php" method="post">
+                <?php 
+                $Select_categories = mysqli_query($con,"SELECT * FROM category") or die("Query failed");
+                while ($cat_itm = $Select_categories->fetch_assoc()) {
+                ?>
+                <li>
+                    <button type="submit" class="btn_delete" name="cat_submit" value="<?php echo $cat_itm['Category']; ?>">
+                        <?php echo $cat_itm['Category']; ?>
+                    </button>
+                </li>
+                <?php } ?>
+            </form>
+        </ul>
+    </div>
+</div>
+
                             <!--End sidebar categories Box-->
                             <!--Start single sidebar-->
                             <div class="single-sidebar wow fadeInUp animated" data-wow-delay="0.5s"
@@ -283,13 +270,11 @@ if (isset($_SESSION['username'])) {
                                     <div class="col-xl-4 col-lg-4 col-md-6">
                                         <div class="all_products_single text-center">
                                             <div class="all_product_item_image">
-                                            <form id="productForm" action="" method="POST" enctype="multipart/form-data">
+                                        <form id="productForm" action="addToCart.php" method="POST" enctype="multipart/form-data">
                                                 <img src="assets/images/shop/cart_product_img-1.jpg" alt="">
                                                 <div class="all_product_hover">
                                                     <div class="all_product_icon">
-                                                    <a href="#" id="addToCartLink"><span class="icon-shopping-cart"> <h6><?php foreach ($message as $msg): ?>
-                                                     <?php echo $msg . "<br>"; ?>
-                                                    <?php endforeach; ?></span></h6></a>
+                                                    <a href="#" id="addToCartLink"><span class="icon-shopping-cart"> </span></a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -329,10 +314,27 @@ if (isset($_SESSION['username'])) {
                                 <p>Experience elevated farming with Farmicom : where seamless online shopping, top-quality products, 
                                     and innovative solutions converge  </p>
                             </div>
-                            <form>
+                            <?php
+                                if(isset($_POST['subscribe'])){
+                                    $Email = mysqli_real_escape_string($con, $_POST['email']);
+                                    
+                                    $stmt = $con->prepare("SELECT * FROM subscriptions WHERE Email = ?");
+                                    $stmt -> bind_param("s",$Email);
+                                    $stmt -> execute();
+                                    $fetch_sub = $stmt -> get_result();
+
+                                    if($fetch_sub->num_rows!==0){
+                                        echo "<script>alert('Already subscribed');</script>";
+                                    }else{
+                                        mysqli_query($con, "INSERT INTO subscriptions (email) VALUES('$Email')");
+                                        echo "<script>alert('Subscribed successfully');</script>";
+                                    }
+                                }
+                            ?>
+                            <form action="" method="post">
                                 <div class="footer_input-box">
-                                    <input type="Email" placeholder="Email Address">
-                                    <button type="submit" class="button"><i class="fa fa-check"></i></button>
+                                    <input type="Email"  name = "email" placeholder="Email Address">
+                                    <button type="submit" name="subscribe" class="button"><i class="fa fa-check"></i></button>
                                 </div>
                             </form>
                         </div>
@@ -343,10 +345,10 @@ if (isset($_SESSION['username'])) {
                                 <h3>Explore</h3>
                             </div>
                             <ul class="footer-widget__links-list list-unstyled">
-                                <li><a href="about.html">About Us</a></li>
-                                <li><a href="product.html">Shop with us</a></li>
-                                <li><a href="farmers.html">Meet the Farmers</a></li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="about.php">About Us</a></li>
+                                <li><a href="product.php">Shop with us</a></li>
+                                <li><a href="farmers.php">Meet the Farmers</a></li>
+                                <li><a href="contact.php">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -436,18 +438,20 @@ if (isset($_SESSION['username'])) {
 
 
 
-    <div class="search-popup">
+    <    <div class="search-popup">
         <div class="search-popup__overlay custom-cursor__overlay">
             <div class="cursor"></div>
             <div class="cursor-follower"></div>
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-            <form action="#" class="search-popup__form">
+             <form action="search.php" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <button name= "btnt" type="submit"><i class="fa fa-search"></i></button>
             </form>
-        </div><!-- /.search-popup__inner -->
-    </div><!-- /.search-popup -->
+            
+        </div>
+    </div>
+
 
 
     <script src="assets/js/jquery.min.js"></script>
@@ -472,10 +476,27 @@ if (isset($_SESSION['username'])) {
     <script src="assets/js/appear.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
     <script>
-    document.getElementById('addToCartLink').addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        document.getElementById('productForm').submit(); // Submit the form
+    $(document).ready(function() {
+    $(document).on('click', '#addToCartLink', function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+
+        var form = $(this).closest('form'); // Get the closest form element
+        var formData = form.serialize(); // Serialize the form data
+
+        $.ajax({
+            type: 'POST',
+            url: 'addToCart.php',
+            data: formData,
+            success: function(response) {
+                window.location.href = window.location.href;
+                alert(response);
+            },
+            error: function() {
+                alert('An error occurred while adding the product to the cart.');
+            }
+        });
     });
+});
 </script>
 
     <!-- template scripts -->

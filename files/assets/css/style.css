@@ -9839,6 +9839,22 @@ sup{
     -webkit-animation: sunMove 10s linear infinite;
     animation: sunMove 10s linear infinite;
 }
+.btn_delete{
+    background-color: white;
+    border: none;
+}
+.all_categories{
+    display: flex;
+    background-color: var(--thm-black);
+    color: var(--thm-gray);
+    border: none;
+    border-radius: 10px;
+    height: 35px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 12px;
+}
 
 @-webkit-keyframes sunMove {
     0% {
