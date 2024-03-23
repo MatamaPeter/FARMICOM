@@ -4,19 +4,19 @@ include 'config.php';
 
 session_start();
 
-$username = $_SESSION['username'];
+$username = $_SESSION['email'];
 
-if (isset($_SESSION['username'])) {
+if (isset($_SESSION['email'])) {
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
-    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->bind_param("s", $_SESSION['email']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
 }else{$Cart_number=0;}
 
 if (isset($_POST['update'])) {
-    if (isset($_SESSION['username'])) {
-        $username = $_SESSION['username'];
+    if (isset($_SESSION['email'])) {
+        $username = $_SESSION['email'];
       
         foreach ($_POST['cart_id'] as $key => $cartId) {
             $quantity = $_POST['quantity'][$cartId];
@@ -28,8 +28,8 @@ if (isset($_POST['update'])) {
 }
 // Check if the delete button is clicked
 if (isset($_POST['delete'])) {
-    if (isset($_SESSION['username'])) {
-        $username = $_SESSION['username'];
+    if (isset($_SESSION['email'])) {
+        $username = $_SESSION['email'];
         
         // Retrieve cart ID of the item to be deleted
         $cartId = $_POST['delete'];
@@ -197,8 +197,8 @@ if (isset($_POST['delete'])) {
                         <table class="cart_table">
     <thead class="cart_table_head">
         <?php
-    if (isset($_SESSION['username'])) {
-        $username = $_SESSION['username'];
+    if (isset($_SESSION['email'])) {
+        $username = $_SESSION['email'];
         $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
         if($select_cart->num_rows!==0){
             ?>
@@ -221,8 +221,8 @@ if (isset($_POST['delete'])) {
                     </thead>
                     <tbody>
                     <?php
-if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
+if (isset($_SESSION['email'])) {
+    $username = $_SESSION['email'];
     $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
     if($select_cart->num_rows!==0){
     while ($cart_items = mysqli_fetch_assoc($select_cart)) {

@@ -57,7 +57,7 @@
                         <a href="+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
                     </div>
                     <div class="topbar-one__middle">
-                        <a href="index.html" class="main-nav__logo">
+                        <a href="index.php" class="main-nav__logo">
                             <img src="assets/images/resources/logo.png" class="main-logo" alt="Awesome Image" />
                         </a>
                     </div>
@@ -88,34 +88,34 @@
                         <div class="main-nav__main-navigation">
                             <ul class=" main-nav__navigation-box">
                                 <li class="dropdown">
-                                    <a href="index.html">Home</a>
+                                    <a href="index.php">Home</a>
                                   
                                 </li>
                                 <li class="dropdown current">
-                                    <a href="product.html">Shop</a>
+                                    <a href="product.php">Shop</a>
                                     <ul>
-                                        <li><a href="product-detail.html">Product Detail</a></li>
-                                        <li><a href="cart.html">Cart</a></li>
-                                        <li><a href="checkout.html">Checkout</a></li>
+                                        <li><a href="product-detail.php">Product Detail</a></li>
+                                        <li><a href="cart.php">Cart</a></li>
+                                        <li><a href="checkout.php">Checkout</a></li>
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
                                                          
                                 <li class="dropdown">
-                                    <a href="about.html">About Us</a>
+                                    <a href="about.php">About Us</a>
                                     <ul>
-                                        <li><a href="why_choose_us.html">Why Choose Us</a></li>
+                                        <li><a href="why_choose_us.php">Why Choose Us</a></li>
                                         
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
                                 <li>
-                                    <a href="contact.html">Contacts</a>
+                                    <a href="contact.php">Contacts</a>
                                 </li>
                                 <li>
-                                    <a href="farmers.html">Farmers</a>
+                                    <a href="farmers.php">Farmers</a>
                                 </li>
-                                <li> <a href="rform.html" class="cta_one__btn">Register with us <span style="color:rgb(255, 251, 0); font-size: 60%;"> Hot &#128293 </a></li>
+                                <li> <a href="rform.php" class="cta_one__btn">Register with us <span style="color:rgb(255, 251, 0); font-size: 60%;"> Hot &#128293 </a></li>
 
                             </ul>
                         
@@ -123,7 +123,7 @@
 
                         <div class="main-nav__right">
                             <div class="icon_cart_box">
-                                <a href="cart.html">
+                                <a href="cart.php">
                                     <span class="icon-shopping-cart"></span>
                                 </a>
                             </div>
@@ -135,9 +135,9 @@
         </div>
         <section class="page-header" style="background-image: url(assets/images/backgrounds/page-header-contact.jpg);">
             <div class="container">
-                <h2>Cart</h2>
+                <h2>Checkout</h2>
                 <ul class="thm-breadcrumb list-unstyled">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li><a href="" class="shop_style">Shop</a></li>
                     <li><span>checkout</span></li>
                 </ul>
@@ -556,10 +556,10 @@
                                 <h3>Explore</h3>
                             </div>
                             <ul class="footer-widget__links-list list-unstyled">
-                                <li><a href="about.html">About Us</a></li>
-                                <li><a href="product.html">Shop with us</a></li>
-                                <li><a href="farmers.html">Meet the Farmers</a></li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="about.php">About Us</a></li>
+                                <li><a href="product.php">Shop with us</a></li>
+                                <li><a href="farmers.php">Meet the Farmers</a></li>
+                                <li><a href="contact.php">Contact</a></li>
                             </ul>
                         </div>
                     </div>

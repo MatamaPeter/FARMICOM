@@ -2,11 +2,13 @@
 session_start();
 include("config.php");
 
-if (!isset($_SESSION['username'])) {
-    header("location:lform.php");
+if (!isset($_SESSION['email'])) {
+    $message = 'Kindly login to place order';
+    echo $message;
     exit;
+    
 } else {
-    $username = $_SESSION['username'];
+    $username = $_SESSION['email'];
 }
 
 $product_name = $_POST['product_name'];

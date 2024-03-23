@@ -2,9 +2,9 @@
 session_start();
 include("config.php");
 
-if (isset($_SESSION['username'])) {
+if (isset($_SESSION['email'])) {
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
-    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->bind_param("s", $_SESSION['email']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
@@ -137,7 +137,7 @@ if (isset($_SESSION['username'])) {
                         <div class="main-nav__right">
                             <div class="icon_cart_box">
                                 <?php
-                                if(isset($_SESSION['username'])){
+                                if(isset($_SESSION['email'])){
                                     
                                     echo"<div class='usern'>{$_SESSION['email']}</div>
                                      <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";

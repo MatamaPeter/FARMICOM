@@ -1,6 +1,7 @@
 
 <?php
 session_start();
+unset($_SESSION['username']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -101,7 +102,7 @@ session_start();
 					</div>
 
 					<div class="text-center p-t-136">
-						<a class="txt2" href="rform.html">
+						<a class="txt2" href="rform.php">
 							Create your Account
 							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
 						</a>

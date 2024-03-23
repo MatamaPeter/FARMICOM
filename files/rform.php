@@ -27,7 +27,7 @@
 		<div class="container-login100">
 			<div class="wrap-login100">
 				<div class="login100-pic js-tilt" data-tilt>
-					<img src="assets/images/img-01.png" alt="IMG" href="index.html">
+					<img src="assets/images/img-01.png" alt="IMG" href="index.php">
 				</div>
 				<?php
 				include("config.php");
@@ -104,7 +104,7 @@
 					</div>
 
 					<div class="text-center p-t-136">
-						<a class="txt2" href="lform.html">
+						<a class="txt2" href="lform.php">
 							Login
 							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
 						</a>

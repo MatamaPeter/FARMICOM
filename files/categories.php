@@ -3,16 +3,17 @@ session_start();
 
 include("config.php");
 
-$username = $_SESSION['username'];
 
-if (isset($_SESSION['username'])) {
+if (isset($_SESSION['email'])) {
+    $username = $_SESSION['email'];
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
-    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->bind_param("s", $_SESSION['email']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
 }else{
     $Cart_number = 0;
+    $username = "guest";
 }
 
 if (isset($_POST['cat_submit'])) {
@@ -164,7 +165,7 @@ if (isset($_POST['cat_submit'])) {
                             <div class="main-nav__right">
                                 <div class="icon_cart_box">
                                     <?php
-                                    if(isset($_SESSION['username'])){
+                                    if(isset($_SESSION['email'])){
                                         echo"<div class='usern'>{$_SESSION['email']}</div>
                                          <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
                                     }else{
@@ -190,7 +191,7 @@ if (isset($_POST['cat_submit'])) {
                 <ul class="thm-breadcrumb list-unstyled">
                     <li><a href="index.php">Home</a></li>
                     <li><a href="" class="shop_style">Shop</a></li>
-                    <li><span>Products</span></li>
+                    <li><span>Category</span></li>
                 </ul>
             </div>
         </section>

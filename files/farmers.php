@@ -1,3 +1,33 @@
+<?php 
+session_start();
+include("config.php");
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if(isset($_POST['send_message'])){
+
+    $name = mysqli_real_escape_string($con, $_POST['name']);
+    $email = mysqli_real_escape_string($con, $_POST['email']);
+    $phone = mysqli_real_escape_string($con, $_POST['phone']);
+    $subject = mysqli_real_escape_string($con, $_POST['subject']);
+    $message = mysqli_real_escape_string($con, $_POST['message']);
+    
+    
+        mysqli_query($con, "INSERT INTO messages(Name, Email, Phone, Subject, Message) VALUES ('$name','$email','$phone','$subject','$message')") or die ("Query failed");
+        echo "<script>alert('Message Sent, we will reply soon');</script>";
+    }else{
+        echo "<script>alert('Message Failed');</script>";
+    }
+}
+
+if (isset($_SESSION['email'])) {
+    $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
+    $stmt->bind_param("s", $_SESSION['email']);
+    $stmt->execute();
+    $cart_sum = $stmt->get_result();
+    $Cart_number = $cart_sum->num_rows;
+}else{$Cart_number=0;}
+
+    
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -95,7 +125,6 @@
                                     <li class="dropdown">
                                         <a href="product.php">Shop</a>
                                         <ul>
-                                            <li><a href="product-detail.php">Product Detail</a></li>
                                             <li><a href="cart.php">Cart</a></li>
                                             <li><a href="checkout.php">Checkout</a></li>
                                         </ul><!-- /.sub-menu -->
@@ -116,7 +145,6 @@
                                     <li class="current">
                                         <a href="farmers.php">Farmers</a>
                                     </li>
-                                    <li> <a href="rform.php" class="cta_one__btn">Register with us <span style="color:rgb(255, 251, 0); font-size: 60%;"> Hot &#128293 </a></li>
                                     
                                 </ul>
                                 
@@ -126,12 +154,25 @@
                             </div><!-- /.navbar-collapse -->
     
                             <div class="main-nav__right">
-                                <div class="icon_cart_box">
-                                    <a href="cart.php">
-                                        <span class="icon-shopping-cart"></span>
-                                    </a>
-                                </div>
+                            <div class="icon_cart_box">
+                                <?php
+                                if(isset($_SESSION['email'])){
+                                    
+                                    echo"<div class='usern'>{$_SESSION['email']}</div>
+                                     <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
+                                }else{
+                                    echo"<center><a href='lform.php'><button class='logout-button'>Login</button></a></center>";
+                                }
+                                ?>
                             </div>
+                            <div class="icon_cart_box">
+                                
+                            <a href="cart.php">
+                            
+                                    <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
+                                  </a>
+                            </div>
+                        </div>
                         </div>
                     </nav>
                 </header>
@@ -152,14 +193,19 @@
             <div class="container">
                 
                 <div class="row">
+                    <?php
+                    $select_farmers = mysqli_query($con, "SELECT * FROM farmers") or die ("query failed");
+                    while($farmers_dtls = $select_farmers->fetch_assoc()){
+
+                    ?>
                     <div class="col-xl-4 col-lg-4 col-md-6">
                         <div class="team_one_single wow fadeInUp">
                             <div class="team_one_image">
-                                <img src="assets/images/team/farmers-1.jpg" alt="">
+                                <img src="<?php echo $farmers_dtls['Photo']?>" alt="">
                             </div>
                             <div class="team_one_deatils">
                                 <p>farmer</p>
-                                <h2><a href="#">David Okello</a></h2>
+                                <h2><a href="#"><?php echo $farmers_dtls['Firstname']."".$farmers_dtls['Lastname']?></a></h2>
                                 <div class="team_one_social">
                                     <a href="#"><i class="fab fa-facebook-square"></i></a>
                                     <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
@@ -170,97 +216,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="team_one_single wow fadeInDown">
-                            <div class="team_one_image">
-                                <img src="assets/images/team/farmers-2.jpg" alt="">
-                            </div>
-                            <div class="team_one_deatils">
-                                <p>farmer</p>
-                                <h2><a href="#">Kevin Brown</a></h2>
-                                <div class="team_one_social">
-                                    <a href="#"><i class="fab fa-facebook-square"></i></a>
-                                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-                                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                                      </svg></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="team_one_single wow fadeInUp">
-                            <div class="team_one_image">
-                                <img src="assets/images/team/farmers-3.jpg" alt="">
-                            </div>
-                            <div class="team_one_deatils">
-                                <p>farmer</p>
-                                <h2><a href="#">Tyler Martin</a></h2>
-                                <div class="team_one_social">
-                                    <a href="#"><i class="fab fa-facebook-square"></i></a>
-                                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-                                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                                      </svg></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="team_one_single wow fadeInDown">
-                            <div class="team_one_image">
-                                <img src="assets/images/team/farmers-4.jpg" alt="">
-                            </div>
-                            <div class="team_one_deatils">
-                                <p>farmer</p>
-                                <h2><a href="#">Jonathan K.</a></h2>
-                                <div class="team_one_social">
-                                    <a href="#"><i class="fab fa-facebook-square"></i></a>
-                                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-                                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                                      </svg></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="team_one_single wow fadeInUp">
-                            <div class="team_one_image">
-                                <img src="assets/images/team/farmers-5.jpg" alt="">
-                            </div>
-                            <div class="team_one_deatils">
-                                <p>farmer</p>
-                                <h2><a href="#">John SMith</a></h2>
-                                <div class="team_one_social">
-                                    <a href="#"><i class="fab fa-facebook-square"></i></a>
-                                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-                                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                                      </svg></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="team_one_single wow fadeInDown">
-                            <div class="team_one_image">
-                                <img src="assets/images/team/farmers-6.jpg" alt="">
-                            </div>
-                            <div class="team_one_deatils">
-                                <p>farmer</p>
-                                <h2><a href="#">Andrew Smitty</a></h2>
-                                <div class="team_one_social">
-                                    <a href="#"><i class="fab fa-facebook-square"></i></a>
-                                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-                                        <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                                      </svg></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                  </div>
+                  <?php } ?>
             </div>
         </section>
 
@@ -278,10 +235,27 @@
                                 <p>Experience elevated farming with Farmicom : where seamless online shopping, top-quality products, 
                                     and innovative solutions converge  </p>
                             </div>
-                            <form>
+                            <?php
+                                if(isset($_POST['subscribe'])){
+                                    $Email = mysqli_real_escape_string($con, $_POST['email']);
+                                    
+                                    $stmt = $con->prepare("SELECT * FROM subscriptions WHERE Email = ?");
+                                    $stmt -> bind_param("s",$Email);
+                                    $stmt -> execute();
+                                    $fetch_sub = $stmt -> get_result();
+
+                                    if($fetch_sub->num_rows!==0){
+                                        echo "<script>alert('Already subscribed');</script>";
+                                    }else{
+                                        mysqli_query($con, "INSERT INTO subscriptions (email) VALUES('$Email')");
+                                        echo "<script>alert('Subscribed successfully');</script>";
+                                    }
+                                }
+                            ?>
+                            <form action="" method="post">
                                 <div class="footer_input-box">
-                                    <input type="Email" placeholder="Email Address">
-                                    <button type="submit" class="button"><i class="fa fa-check"></i></button>
+                                    <input type="Email"  name = "email" placeholder="Email Address">
+                                    <button type="submit" name="subscribe" class="button"><i class="fa fa-check"></i></button>
                                 </div>
                             </form>
                         </div>
@@ -389,12 +363,13 @@
             <div class="cursor-follower"></div>
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-            <form action="#" class="search-popup__form">
+             <form action="search.php" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <button name= "btnt" type="submit"><i class="fa fa-search"></i></button>
             </form>
-        </div><!-- /.search-popup__inner -->
-    </div><!-- /.search-popup -->
+            
+        </div>
+    </div>
 
 
     <script src="assets/js/jquery.min.js"></script>
