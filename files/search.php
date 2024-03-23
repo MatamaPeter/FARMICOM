@@ -245,15 +245,20 @@ if (isset($_SESSION['username'])) {
         <div class="col-xl-4 col-lg-4 col-md-6">
             <div class="all_products_single text-center">
                 <div class="all_product_item_image">
+                <form id="productForm" action="addToCart.php" method="POST" enctype="multipart/form-data">
                    <img src="<?php echo $result['product_img']; ?>" alt="">
                     <div class="all_product_hover">
                         <div class="all_product_icon">
-                            <a href="cart.php"><span class="icon-shopping-cart"></span></a>
+                        <a href="#" id="addToCartLink"><span class="icon-shopping-cart"> </span></a>
                         </div>
                     </div>
                 </div>
                 <h4><?php echo $result['Product_name'];?></h4>
                 <p><?php echo $result['Price'];?></p>
+                <input type="hidden" name="product_name" value="<?php echo $result['Product_name']; ?>">
+                <input type="hidden" name="price" value="<?php echo $result['Price']; ?>">
+                <input type="hidden" name="product_image" value="<?php echo $result['product_img']; ?>">
+                 </form>
                 <?php endforeach; ?>
                 <?php else: ?>
                  <p>No results found</p>
@@ -449,6 +454,29 @@ if (isset($_SESSION['username'])) {
     <script src="assets/js/isotope.js"></script>
     <script src="assets/js/appear.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
+    <script>
+    $(document).ready(function() {
+    $(document).on('click', '#addToCartLink', function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+
+        var form = $(this).closest('form'); // Get the closest form element
+        var formData = form.serialize(); // Serialize the form data
+
+        $.ajax({
+            type: 'POST',
+            url: 'addToCart.php',
+            data: formData,
+            success: function(response) {
+                window.location.href = window.location.href;
+                alert(response);
+            },
+            error: function() {
+                alert('An error occurred while adding the product to the cart.');
+            }
+        });
+    });
+});
+</script>
 
     <!-- template scripts -->
     <script src="assets/js/theme.js"></script>

@@ -1,3 +1,37 @@
+<?php 
+session_start();
+include("config.php");
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if(isset($_POST['send_message'])){
+
+    $name = mysqli_real_escape_string($con, $_POST['name']);
+    $email = mysqli_real_escape_string($con, $_POST['email']);
+    $phone = mysqli_real_escape_string($con, $_POST['phone']);
+    $subject = mysqli_real_escape_string($con, $_POST['subject']);
+    $message = mysqli_real_escape_string($con, $_POST['message']);
+    
+    
+        mysqli_query($con, "INSERT INTO messages(Name, Email, Phone, Subject, Message) VALUES ('$name','$email','$phone','$subject','$message')") or die ("Query failed");
+        echo "<script>alert('Message Sent, we will reply soon');</script>";
+    }else{
+        echo "<script>alert('Message Failed');</script>";
+    }
+}
+    
+
+if (isset($_SESSION['username'])) {
+    $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
+    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->execute();
+    $cart_sum = $stmt->get_result();
+    $Cart_number = $cart_sum->num_rows;
+}else{$Cart_number=0;}
+
+
+
+    
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -57,7 +91,7 @@
                         <a href="+254 712 345 678"><span class="icon-phone-call"></span>+254 712 345 678</a>
                     </div>
                     <div class="topbar-one__middle">
-                        <a href="index.html" class="main-nav__logo">
+                        <a href="index.php" class="main-nav__logo">
                             <img src="assets/images/resources/logo.png" class="main-logo" alt="Awesome Image" />
                         </a>
                     </div>
@@ -88,34 +122,32 @@
                         <div class="main-nav__main-navigation">
                             <ul class=" main-nav__navigation-box">
                                 <li>
-                                    <a href="index.html">Home</a>
+                                    <a href="index.php">Home</a>
                                   
                                 </li>
                                 <li class="dropdown">
-                                    <a href="product.html">Shop</a>
+                                    <a href="product.php">Shop</a>
                                     <ul>
-                                        <li><a href="product-detail.html">Product Detail</a></li>
-                                        <li><a href="cart.html">Cart</a></li>
-                                        <li><a href="checkout.html">Checkout</a></li>
+                                        <li><a href="cart.php">Cart</a></li>
+                                        <li><a href="checkout.php">Checkout</a></li>
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
                                                          
                                 <li class="dropdown">
-                                    <a href="about.html">About Us</a>
+                                    <a href="about.php">About Us</a>
                                     <ul>
-                                        <li><a href="why_choose_us.html">Why Choose Us</a></li>
+                                        <li><a href="why_choose_us.php">Why Choose Us</a></li>
                                         
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
                                 <li class="current">
-                                    <a href="contact.html">Contacts</a>
+                                    <a href="contact.php">Contacts</a>
                                 </li>
                                 <li>
-                                    <a href="farmers.html">Farmers</a>
+                                    <a href="farmers.php">Farmers</a>
                                 </li>
-                                <li> <a href="rform.html" class="cta_one__btn">Register with us <span style="color:rgb(255, 251, 0); font-size: 60%;"> Hot &#128293 </a></li>
 
                             </ul>
                         
@@ -123,9 +155,22 @@
 
                         <div class="main-nav__right">
                             <div class="icon_cart_box">
-                                <a href="cart.html">
-                                    <span class="icon-shopping-cart"></span>
-                                </a>
+                                <?php
+                                if(isset($_SESSION['username'])){
+                                    
+                                    echo"<div class='usern'>{$_SESSION['email']}</div>
+                                     <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
+                                }else{
+                                    echo"<center><a href='lform.php'><button class='logout-button'>Login</button></a></center>";
+                                }
+                                ?>
+                            </div>
+                            <div class="icon_cart_box">
+                                
+                            <a href="cart.php">
+                            
+                                    <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
+                                  </a>
                             </div>
                         </div>
                     </div>
@@ -138,7 +183,7 @@
             <div class="container">
                 <h2>Contact</h2>
                 <ul class="thm-breadcrumb list-unstyled">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li><span>Contact</span></li>
                 </ul>
             </div>
@@ -196,7 +241,7 @@
                                     <img src="assets/images/resources/leaf.png" alt="">
                                 </div>
                             </div>
-                            <form action="inc/sendemail.php" class="contact-one__form">
+                            <form action="" class="contact-one__form" method="post">
                                 <div class="row low-gutters">
                                     <div class="col-md-6">
                                         <div class="input-group">
@@ -225,7 +270,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="input-group contact__btn">
-                                            <button type="submit" class="thm-btn contact-one__btn">Send message</button>
+                                            <button type="submit" name="send_message" class="thm-btn contact-one__btn">Send message</button>
                                         </div>
                                     </div>
                                 </div>
@@ -274,12 +319,24 @@
                                 <p>Experience elevated farming with Farmicom : where seamless online shopping, top-quality products, 
                                     and innovative solutions converge  </p>
                             </div>
-                            <form>
-                                <div class="footer_input-box">
-                                    <input type="Email" placeholder="Email Address">
-                                    <button type="submit" class="button"><i class="fa fa-check"></i></button>
-                                </div>
-                            </form>
+                            <?php
+                                if(isset($_POST['subscribe'])){
+                                    $Email = mysqli_real_escape_string($con, $_POST['email']);
+                                    
+                                    $stmt = $con->prepare("SELECT * FROM subscriptions WHERE Email = ?");
+                                    $stmt -> bind_param("s",$Email);
+                                    $stmt -> execute();
+                                    $fetch_sub = $stmt -> get_result();
+
+                                    if($fetch_sub->num_rows!==0){
+                                        echo "<script>alert('Already subscribed');</script>";
+                                    }else{
+                                        mysqli_query($con, "INSERT INTO subscriptions (email) VALUES('$Email')");
+                                        echo "<script>alert('Subscribed successfully');</script>";
+                                    }
+                                }
+                            ?>
+                            <form action="" method="post">
                         </div>
                     </div>
                     <div class="col-xl-2 col-lg-2 col-md-6">
@@ -288,10 +345,10 @@
                                 <h3>Explore</h3>
                             </div>
                             <ul class="footer-widget__links-list list-unstyled">
-                                <li><a href="about.html">About Us</a></li>
-                                <li><a href="product.html">Shop with us</a></li>
-                                <li><a href="farmers.html">Meet the Farmers</a></li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="about.php">About Us</a></li>
+                                <li><a href="product.php">Shop with us</a></li>
+                                <li><a href="farmers.php">Meet the Farmers</a></li>
+                                <li><a href="contact.php">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -385,12 +442,14 @@
             <div class="cursor-follower"></div>
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-            <form action="#" class="search-popup__form">
+             <form action="search.php" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <button name= "btnt" type="submit"><i class="fa fa-search"></i></button>
             </form>
-        </div><!-- /.search-popup__inner -->
-    </div><!-- /.search-popup -->
+            
+        </div>
+    </div>
+
 
 
     <script src="assets/js/jquery.min.js"></script>
