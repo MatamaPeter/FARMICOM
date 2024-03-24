@@ -4,15 +4,17 @@ include 'config.php';
 
 session_start();
 
-$username = $_SESSION['email'];
-
 if (isset($_SESSION['email'])) {
+    $username = $_SESSION['email'];
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
     $stmt->bind_param("s", $_SESSION['email']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
-}else{$Cart_number=0;}
+}else{
+    $Cart_number = 0;
+    $username = "guest";
+}
 
 if (isset($_POST['update'])) {
     if (isset($_SESSION['email'])) {
@@ -219,89 +221,88 @@ if (isset($_POST['delete'])) {
     
    
                     </thead>
-                    <tbody>
-                    <?php
+                    <tbody><?php
 if (isset($_SESSION['email'])) {
     $username = $_SESSION['email'];
     $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
-    if($select_cart->num_rows!==0){
-    while ($cart_items = mysqli_fetch_assoc($select_cart)) {
-        
-        if (isset($cart_items['quantity']) && isset($cart_items['price'])) {
-            $subtotal = 0;
-            ?>
-                 <tr>
-                            <td colspan="2">
-                                <div class="colum_box">
-                                    <div class="prod_thum">
-                                        <a href="#"><img src="<?php echo $cart_items['image']; ?>" alt=""></a>
-                                    </div>
-                                    <div class="title">
-                                        <h3 class="prod-title"><?php echo $cart_items['name']; ?></h3>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="pro_price">KES <?php echo $cart_items['price']; ?></td>
-                <td class="pro_qty">
-                    <div class="product-quantity-box">
-                        <div class="input-box">
-                            <input type="hidden" name="cart_id[]" value="<?php echo $cart_items['id']; ?>">
-                            <input class="quantity-spinner" type="text" value="<?php echo $cart_items['quantity']; ?>" name="quantity[<?php echo $cart_items['id']; ?>]">
+    $subtotal = 0; // Initialize $subtotal to 0
+    if ($select_cart->num_rows !== 0) {
+        while ($cart_items = mysqli_fetch_assoc($select_cart)) {
+            if (isset($cart_items['quantity']) && isset($cart_items['price'])) {
+                $item_subtotal = $cart_items['price'] * $cart_items['quantity'];
+                $subtotal += $item_subtotal; // Add the item subtotal to the overall subtotal
+?>
+                <tr>
+                    <td colspan="2">
+                        <div class="colum_box">
+                            <div class="prod_thum">
+                                <a href="#"><img src="<?php echo $cart_items['image']; ?>" alt=""></a>
+                            </div>
+                            <div class="title">
+                                <h3 class="prod-title"><?php echo $cart_items['name']; ?></h3>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td class="pro_sub_total">KES <?php echo $sub_total = ($cart_items['price']) * $cart_items['quantity']; ?></td>
-                <td>
-                    <div class="pro_remove">
-                    <button class="btn_delete" type="submit" name="delete" value="<?php echo $cart_items['id']; ?>"><i class="fas fa-times"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <?php
+                    </td>
+                    <td class="pro_price">KES <?php echo $cart_items['price']; ?></td>
+                    <td class="pro_qty">
+                        <div class="product-quantity-box">
+                            <div class="input-box">
+                                <input type="hidden" name="cart_id[]" value="<?php echo $cart_items['id']; ?>">
+                                <input class="quantity-spinner" type="text" value="<?php echo $cart_items['quantity']; ?>" name="quantity[<?php echo $cart_items['id']; ?>]">
+                            </div>
+                        </div>
+                    </td>
+                    <td class="pro_sub_total">KES <?php echo $item_subtotal; ?></td>
+                    <td>
+                        <div class="pro_remove">
+                            <button class="btn_delete" type="submit" name="delete" value="<?php echo $cart_items['id']; ?>"><i class="fas fa-times"></i></button>
+                        </div>
+                    </td>
+                </tr>
+<?php
+            }
         }
+    } else {
+        echo "<centre><h1>Cart is empty</h1></centre>";
     }
-
-}
-else{
-    echo "<centre><h1>Cart is empty</h1></centre>";
-}
-}
- else {
+} else {
     echo "Cart is empty";
 }
 ?>
-
 </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="row cart_apply_coupon_box">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="button_box">
-                        <?php
-                        $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
-                         if($select_cart->num_rows!==0){
-                            ?>
-                            <button class="thm-btn update_btn" type="submit" name="update">Update</button>
-                            <button class="thm-btn checkout_btn" type="submit" name="checkout">Checkout</button>
-                        </div>
-                    </div>
-                </div>
-                    <div class="col-xl-6">
-                        <ul class="total_box list-unstyled">
-                            
-                            <li><span>Subtotal</span> <?php echo "KES ". $subtotal += $sub_total; ?></li>
-                            <li><span>Shipping Cost</span>
-                            <?php if($subtotal >= 5000){
-                               $Shipping_cost = 0;}
-                               else {
-                                $Shipping_cost = round(0.45 * $subtotal, 0);
-                               }
-                               echo "KES ". $Shipping_cost;
+</div>
+</div>
+</div>
+<div class="row cart_apply_coupon_box">
+<div class="row">
+<div class="col-xl-12">
+<div class="button_box">
+<?php
+$select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
+if ($select_cart->num_rows !== 0) {
+?>
+<button class="thm-btn update_btn" type="submit" name="update">Update</button>
+<button class="thm-btn checkout_btn" type="submit" name="checkout">Checkout</button>
+</div>
+</div>
+</div>
+<div class="col-xl-6">
+<ul class="total_box list-unstyled">
+<li><span>Subtotal</span> <?php echo "KES " . $subtotal; ?></li>
+<li><span>Shipping Cost</span> <?php
+                                if ($subtotal >= 5000) {
+                                    $Shipping_cost = 0;
+                                } else {
+                                    $Shipping_cost = round(0.45 * $subtotal, 0);
+                                }
+                                echo "KES " . $Shipping_cost;
                                 ?></li>
-                            <li><span>Total</span><?php echo "KES ". $gtotal = $subtotal + $Shipping_cost?> </li>
-                        <?php }else{echo"";} ?>
+<li><span>Total</span><?php echo "KES " . ($gtotal = $subtotal + $Shipping_cost); ?> </li>
+<?php
+} else {
+    echo "";
+}
+?>
                         </ul>
                     </div>
                 </div>

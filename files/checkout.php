@@ -1,3 +1,61 @@
+<?php 
+session_start();
+include("config.php");
+
+
+if (!isset($_SESSION['email'])) {
+    $message = 'Kindly login to Checkout';
+    echo "<script>alert('$message');</script>";
+    echo "<script>window.setTimeout(function() { window.location.href = 'product.php'; }, 600);</script>";
+    exit;
+} else {
+    $username = $_SESSION['email'];
+}
+
+if (isset($_SESSION['email'])) {
+    $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
+    $stmt->bind_param("s", $_SESSION['email']);
+    $stmt->execute();
+    $cart_sum = $stmt->get_result();
+    $Cart_number = $cart_sum->num_rows;
+}else{$Cart_number=0;}
+
+    
+if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])){
+    
+    
+    $User_email = $username;
+    $country = mysqli_real_escape_string($con,$_POST['country']);
+    $firstname = mysqli_real_escape_string($con,$_POST['firstname']);
+    $lastname = mysqli_real_escape_string($con,$_POST['lastname']);
+    $address = mysqli_real_escape_string($con,$_POST['address']);
+    $building = mysqli_real_escape_string($con,$_POST['building']);
+    $town = mysqli_real_escape_string($con,$_POST['town']);
+    $orderDate = date("Y-m-d");
+    $payment_id = mysqli_real_escape_string($con,000);
+    $payment_status = mysqli_real_escape_string($con,"complete");
+    $order_status = mysqli_real_escape_string($con,"processing");
+    $product = $_POST['cartitem'];
+    $total = $_POST['cartprice'];
+ echo $product;
+ echo $total;
+        
+    $sql = "INSERT INTO orders (`User_email`, `country`, `firstname`, `lastname`, `address`, `building`, `town`, `orderDate`, `payment_id`, `payment_status`, `order_status`, `product`, `total`) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $con->prepare($sql);
+    $stmt->bind_param("sssssssssssss", $User_email, $country, $firstname, $lastname, $address, $building, $town, $orderDate, $payment_id, $payment_status, $order_status, $product, $total);
+
+    if ($stmt->execute()) {
+    echo "<script>alert('Order made successfully');</script>";
+    } else {
+    echo "<script>alert('Order failed);</script>";
+    echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -94,7 +152,6 @@
                                 <li class="dropdown current">
                                     <a href="product.php">Shop</a>
                                     <ul>
-                                        <li><a href="product-detail.php">Product Detail</a></li>
                                         <li><a href="cart.php">Cart</a></li>
                                         <li><a href="checkout.php">Checkout</a></li>
                                     </ul><!-- /.sub-menu -->
@@ -115,7 +172,6 @@
                                 <li>
                                     <a href="farmers.php">Farmers</a>
                                 </li>
-                                <li> <a href="rform.php" class="cta_one__btn">Register with us <span style="color:rgb(255, 251, 0); font-size: 60%;"> Hot &#128293 </a></li>
 
                             </ul>
                         
@@ -123,9 +179,22 @@
 
                         <div class="main-nav__right">
                             <div class="icon_cart_box">
-                                <a href="cart.php">
-                                    <span class="icon-shopping-cart"></span>
-                                </a>
+                                <?php
+                                if(isset($_SESSION['email'])){
+                                    
+                                    echo"<div class='usern'>{$_SESSION['email']}</div>
+                                     <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
+                                }else{
+                                    echo"<center><a href='lform.php'><button class='logout-button'>Login</button></a></center>";
+                                }
+                                ?>
+                            </div>
+                            <div class="icon_cart_box">
+                                
+                            <a href="cart.php">
+                            
+                                    <sup><?php echo $Cart_number?></sup><span class="icon-shopping-cart"></span>
+                                  </a>
                             </div>
                         </div>
                     </div>
@@ -153,11 +222,11 @@
                                 
                                 <h2>Billing Details</h2>
                             </div>
-                            <form class="billing_details_form">
+                            <form class="billing_details_form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                                 <div class="row">
                                     <div class="col-xl-12">
                                         <div class="billing_input_box">
-                                            <select name="currency" id="currency" class="selectpicker">
+                                            <select name="country" id="currency" class="selectpicker" >
                                                 <option value="Country">Select a country</option>
                                                 <option value="Afghanistan">Afghanistan</option>
                                                 <option value="Åland Islands">Åland Islands</option>
@@ -410,44 +479,40 @@
                                 <div class="row">
                                     <div class="col-xl-6">
                                         <div class="billing_input_box">
-                                            <input type="text" name="first_name" value="" placeholder="First name"
+                                            <input type="text" name="firstname" value="" placeholder="First name"
                                                 required="">
                                         </div>
                                     </div>
                                     <div class="col-xl-6">
                                         <div class="billing_input_box">
-                                            <input type="text" name="last_name" value="" placeholder="Last name"
+                                            <input type="text" name="lastname" value="" placeholder="Last name"
                                                 required="">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
+                                   
                                     <div class="col-xl-12">
                                         <div class="billing_input_box">
-                                            <input type="text" name="company_name" value="" placeholder="Company">
+                                            <input type="text" name="address" value="" placeholder="Address" required>
                                         </div>
                                     </div>
                                     <div class="col-xl-12">
                                         <div class="billing_input_box">
-                                            <input type="text" name="Address" value="" placeholder="Address">
+                                            <input type="text" name="building" value=""
+                                                placeholder="Appartment, Unit, etc." required="">
                                         </div>
                                     </div>
                                     <div class="col-xl-12">
                                         <div class="billing_input_box">
-                                            <input type="text" name="company_name" value=""
-                                                placeholder="Appartment, Unit, etc. (optional)">
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-12">
-                                        <div class="billing_input_box">
-                                            <input type="text" name="Town/City" value="" placeholder="Town / City"
+                                            <input type="text" name="town" value="" placeholder="Town / City"
                                                 required="">
                                         </div>
                                     </div>
                                 </div>
                                 
                                 
-                            </form>
+                           
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6">
@@ -465,22 +530,48 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                     <?php
+                                                        if (isset($_SESSION['email'])) {
+                                                            $username = $_SESSION['email'];
+                                                            $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
+                                                            if($select_cart->num_rows!==0){
+                                                                $subtotal = 0;
+                                                            while ($cart_items = mysqli_fetch_assoc($select_cart)) {
+                                                                
+                                                                
+                                                    
+                                                                if (isset($cart_items['quantity']) && isset($cart_items['price'])) {
+                                                                    $sub_total = ($cart_items['price']) * $cart_items['quantity'] ;  
+                                                                    $subtotal += $sub_total;
+                                                       ?>              
+                                                       
                                                     <tr>
-                                                        <td class="pro__title">Vegetables Pack</td>
-                                                        <td class="pro__price">KES 300.00</td>
+                                                        <td class="pro__title"><?php echo $cart_items['name']; ?></td>
+                                                        <td class="pro__price"><?php echo $sub_total; ?></td>
+                                                    </tr>
+                                                  
+                                                    <input type="hidden" name="cartitem[]" value="<?php echo $cart_items['name']; ?>">
+                                                     <input type="hidden" name="cartprice[]" value="<?php echo $cart_items['price']; ?>">
+
+                                                    <?php } } } } ?>
+                                                    <tr>
+                                                        <td class="pro__title"><b>Subtotal</b></td>
+                                                        <td class="pro__price"><?php echo "KES ". $subtotal ?> </td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td class="pro__title"><b>Shipping</b></td>
+                                                        <td class="pro__price">
+                                                            <?php if($subtotal >= 5000){$Shipping_cost = 0;}
+                                                                  else {$Shipping_cost = round(0.45 * $subtotal, 0);
+                                                                   }echo "KES ". $Shipping_cost;
+                                                            ?> </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pro__title">Subtotal</td>
-                                                        <td class="pro__price">KES 300.00 </td>
+                                                        <td class="pro__title"><b>Total</b></td>
+                                                        <td class="pro__price"><?php echo "KES ". $gtotal = $subtotal + $Shipping_cost?> </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td class="pro__title">Shipping</td>
-                                                        <td class="pro__price">KES 75.00 </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pro__title">Total</td>
-                                                        <td class="pro__price">KES 375.00 </td>
-                                                    </tr>
+                                                   
                                                 </tbody>
                                             </table>
                                         </div>
@@ -490,20 +581,20 @@
                                             <div class="direct">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input name="pay-us" type="radio">
-                                                        <span>Direct Bank Transfer</span>
+                                                        <input name="mpesa" type="radio">
+                                                        <span>M-pesa payment</span>
+                                                        <i class="paypal_card"><img src="assets/images/shop/paypal-card.jpg"
+                                                                alt=""></i>
                                                     </label>
                                                 </div>
                                                 <div class="payments_part_text">
-                                                    <p>Make your payment directly into our bank account. Please use your Order ID as
-                                                        the payment reference. Your order wont be shipped until the funds have
-                                                        cleared in our account.</p>
+                                                    <p> </p>
                                                 </div>
                                             </div>
                                             <div class="paypal_payment">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input name="pay-us" type="radio">
+                                                        <input name="paypal" type="radio">
                                                         <span>Paypal Payment</span>
                                                         <i class="paypal_card"><img src="assets/images/shop/paypal-card.jpg"
                                                                 alt=""></i>
@@ -514,10 +605,13 @@
                                         <div class="row">
                                             <div class="col-xl-12">
                                                 <div class="place_order_btn">
-                                                    <a href="#" class="thm-btn">Place Your Order</a>
+                                                    <button name="order_btn" class="thm-btn">Place Your Order</button>
                                                 </div>
+                                 
                                             </div>
                                         </div>
+                                   
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -542,10 +636,27 @@
                                 <p>Experience elevated farming with Farmicom : where seamless online shopping, top-quality products, 
                                     and innovative solutions converge  </p>
                             </div>
-                            <form>
+                            <?php
+                                if(isset($_POST['subscribe'])){
+                                    $Email = mysqli_real_escape_string($con, $_POST['email']);
+                                    
+                                    $stmt = $con->prepare("SELECT * FROM subscriptions WHERE Email = ?");
+                                    $stmt -> bind_param("s",$Email);
+                                    $stmt -> execute();
+                                    $fetch_sub = $stmt -> get_result();
+
+                                    if($fetch_sub->num_rows!==0){
+                                        echo "<script>alert('Already subscribed');</script>";
+                                    }else{
+                                        mysqli_query($con, "INSERT INTO subscriptions (email) VALUES('$Email')");
+                                        echo "<script>alert('Subscribed successfully');</script>";
+                                    }
+                                }
+                            ?>
+                            <form action="" method="post">
                                 <div class="footer_input-box">
-                                    <input type="Email" placeholder="Email Address">
-                                    <button type="submit" class="button"><i class="fa fa-check"></i></button>
+                                    <input type="Email"  name = "email" placeholder="Email Address">
+                                    <button type="submit" name="subscribe" class="button"><i class="fa fa-check"></i></button>
                                 </div>
                             </form>
                         </div>
@@ -631,15 +742,17 @@
             </nav>
             <div class="side-menu__sep"></div><!-- /.side-menu__sep -->
             <div class="side-menu__content">
-                <p><a href="mailto:needhelp@tripo.com">needhelp@tripo.com</a> <br> <a href="tel:888-999-0000">888 999
-                        0000</a></p>
+                <p><a href="mailto:info@farmicom.com">info@farmicom.com</a> <br> <a href="tel:254-712-3456">+254 712 345
+                        678</a></p>
                 <div class="side-menu__social">
                     <a href="#"><i class="fab fa-facebook-square"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+  <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+</svg></i></a>
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-pinterest-p"></i></a>
                 </div>
-            </div><!-- /.side-menu__content -->
+            </div>
         </div><!-- /.side-menu__block-inner -->
     </div><!-- /.side-menu__block -->
 
@@ -651,12 +764,13 @@
             <div class="cursor-follower"></div>
         </div><!-- /.search-popup__overlay -->
         <div class="search-popup__inner">
-            <form action="#" class="search-popup__form">
+             <form action="search.php" class="search-popup__form" method="post">
                 <input type="text" name="search" placeholder="Type here to Search....">
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <button name= "btnt" type="submit"><i class="fa fa-search"></i></button>
             </form>
-        </div><!-- /.search-popup__inner -->
-    </div><!-- /.search-popup -->
+            
+        </div>
+    </div>
 
 
     <script src="assets/js/jquery.min.js"></script>
@@ -682,6 +796,7 @@
     <script src="assets/js/jquery-ui.js"></script>
     <script src="assets/js/jquery.bootstrap-touchspin.js"></script>
 
+    <script src="https://www.paypal.com/sdk/js?client-id=AVrpS-IfYQtzj0s949Kf_aYmbVJ_UcF7E6lhKpCQkHFGvX2VkpTYC_vIW4j1HUz6D0hbBaOvAYAc4D9p&currency=USD"></script>
     <!-- template scripts -->
     <script src="assets/js/theme.js"></script>
 </body>
