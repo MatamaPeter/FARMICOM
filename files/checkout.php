@@ -1,6 +1,11 @@
 <?php 
 session_start();
+require 'paypal-includes.php';
+require 'paypal-config.php';
 include("config.php");
+
+use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
+use PayPalHttp\HttpException;
 
 
 if (!isset($_SESSION['email'])) {
@@ -21,40 +26,89 @@ if (isset($_SESSION['email'])) {
 }else{$Cart_number=0;}
 
     
-if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])){
-    
-    
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])) {
     $User_email = $username;
-    $country = mysqli_real_escape_string($con,$_POST['country']);
-    $firstname = mysqli_real_escape_string($con,$_POST['firstname']);
-    $lastname = mysqli_real_escape_string($con,$_POST['lastname']);
-    $address = mysqli_real_escape_string($con,$_POST['address']);
-    $building = mysqli_real_escape_string($con,$_POST['building']);
-    $town = mysqli_real_escape_string($con,$_POST['town']);
+    $country = mysqli_real_escape_string($con, $_POST['country']);
+    $firstname = mysqli_real_escape_string($con, $_POST['firstname']);
+    $lastname = mysqli_real_escape_string($con, $_POST['lastname']);
+    $address = mysqli_real_escape_string($con, $_POST['address']);
+    $building = mysqli_real_escape_string($con, $_POST['building']);
+    $town = mysqli_real_escape_string($con, $_POST['town']);
     $orderDate = date("Y-m-d");
-    $payment_id = mysqli_real_escape_string($con,000);
-    $payment_status = mysqli_real_escape_string($con,"complete");
-    $order_status = mysqli_real_escape_string($con,"processing");
-    $product = $_POST['cartitem'];
+    $payment_id = mysqli_real_escape_string($con, 000);
+    $payment_status = mysqli_real_escape_string($con, "complete");
+    $order_status = mysqli_real_escape_string($con, "processing");
     $total = $_POST['cartprice'];
- echo $product;
- echo $total;
-        
-    $sql = "INSERT INTO orders (`User_email`, `country`, `firstname`, `lastname`, `address`, `building`, `town`, `orderDate`, `payment_id`, `payment_status`, `order_status`, `product`, `total`) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+    if (isset($_POST['mpesa'])) {
+        $payment_id = mysqli_real_escape_string($con, "MPESA-" . uniqid());
+        $payment_method = "M-Pesa";
+    } elseif (isset($_POST['paypal'])) {
+        $payment_id = mysqli_real_escape_string($con, "PAYPAL-" . uniqid());
+        $payment_method = "PayPal";
+    
+        // Calculate $gtotal
+        $subtotal = 0;
+        foreach ($_POST['cartprice'] as $key => $price) {
+            $quantity = isset($_POST['cartquantity'][$key]) ? $_POST['cartquantity'][$key] : 1; // Assuming a default quantity of 1 if not provided
+            $sub_total = $price * $quantity;
+            $subtotal += $sub_total;
+        }
+        if ($subtotal >= 5000) {
+            $Shipping_cost = 0;
+        } else {
+            $Shipping_cost = round(0.45 * $subtotal, 0);
+        }
+        $gtotal = $subtotal + $Shipping_cost;
+    
+        // Create a PayPal order
+        $request = new OrdersCreateRequest();
+        $request->prefer('return=representation');
+        $request->body = array(
+            'intent' => 'CAPTURE',
+            'purchase_units' => array(
+                array(
+                    'amount' => array(
+                        'currency_code' => 'KES', // Update with your desired currency code
+                        'value' => $gtotal 
+                    )
+                )
+            )
+        );
+    
+        try {
+            $response = $client->execute($request);
+            $approvalUrl = $response->result->links[1]->href;
+            // Redirect the user to the PayPal approval URL
+            header("Location: $approvalUrl");
+            exit;
+        } catch (HttpException $ex) {
+            echo $ex->statusCode;
+            print_r($ex->getMessage());
+        }
+    }else {
+        echo "<script>alert('Please select a payment method');</script>";
+        exit;
+    }
+
+    $sql = "INSERT INTO orders (`User_email`, `country`, `firstname`, `lastname`, `address`, `building`, `town`, `orderDate`, `payment_id`, `payment_method`, `payment_status`, `order_status`, `product`, `total`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $con->prepare($sql);
-    $stmt->bind_param("sssssssssssss", $User_email, $country, $firstname, $lastname, $address, $building, $town, $orderDate, $payment_id, $payment_status, $order_status, $product, $total);
 
-    if ($stmt->execute()) {
-    echo "<script>alert('Order made successfully');</script>";
-    } else {
-    echo "<script>alert('Order failed);</script>";
-    echo "Error: " . $stmt->error;
+    foreach ($_POST['cartitem'] as $key => $product) {
+        $price = $_POST['cartprice'][$key];
+        $stmt->bind_param("ssssssssssssss", $User_email, $country, $firstname, $lastname, $address, $building, $town, $orderDate, $payment_id, $payment_method, $payment_status, $order_status, $product, $price);
+        if ($stmt->execute()) {
+            echo "<script>alert('Order made successfully');</script>";
+        } else {
+            echo "<script>alert('Order failed);</script>";
+            echo "Error: " . $stmt->error;
+        }
     }
 
     $stmt->close();
 }
+
+
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -340,7 +394,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])){
                                                 <option value="Jersey">Jersey</option>
                                                 <option value="Jordan">Jordan</option>
                                                 <option value="Kazakhstan">Kazakhstan</option>
-                                                <option value="Kenya">Kenya</option>
+                                                <option value="Kenya" selected>Kenya</option>
                                                 <option value="Kiribati">Kiribati</option>
                                                 <option value="Korea, Democratic People's Republic of">Korea, Democratic People's Republic of</option>
                                                 <option value="Korea, Republic of">Korea, Republic of</option>

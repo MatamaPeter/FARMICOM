@@ -1,12 +1,7 @@
-
-<?php
-session_start();
-unset($_SESSION['username']);
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Famricom Login</title>
+	<title>Farmicom Forgost password</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -34,42 +29,7 @@ unset($_SESSION['username']);
 				<div class="login100-pic js-tilt" data-tilt>
 					<img src="assets/images/img-01.png" alt="IMG">
 				</div>
-				<?php
-				include("config.php");
-
-				if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-					$Email=$_POST['email'];
-					$password=$_POST['pass'];
-				
-					$stmt = $con -> prepare("SELECT * FROM users WHERE Email =?");
-					$stmt -> bind_param("s", $Email);
-					$stmt -> execute();
-					$Validate_user = $stmt -> get_result();
-
-					if($Validate_user -> num_rows !==0){
-					$row = $Validate_user->fetch_assoc();
-					$Hashed_password =$row['Password'];
-					
-						if(password_verify($password, $Hashed_password)){
-							$_SESSION['username'] = $row['Username'];
-							$_SESSION['email'] = $row['Email'];
-							header("location:index.php");
-							exit();
-
-						}else{
-							echo"<div class='message'><p class='wrap-input100 validate-input'>Invalid Credentials</p>
-							<a href='javascript:self.history.back()'><button class='login100-form-btn'>Try Again</div>";		
-							exit();
-
-						}
-					}else{
-						echo"<div class='message'><p class='wrap-input100 validate-input'>User not registered</p>
-						<a href='javascript:self.history.back()'><button class='login100-form-btn'>Go back</div>";
-						}
-					}
-				else{
-				?>
-				<form class="login100-form validate-form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" method="post">
+				<form class="login100-form validate-form" action="forgot_password_process.php" method="post">
 						<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
 						<input class="input100" type="text" name="email" placeholder="Email">
 						<span class="focus-input100"></span>
@@ -85,30 +45,16 @@ unset($_SESSION['username']);
 							<i class="fa fa-lock" aria-hidden="true"></i>
 						</span>
 					</div>
-					
+
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" name="login">
-							Login
+						<button class="login100-form-btn" name="reset">
+							Change password
 						</button>
 					</div>
 
-					<div class="text-center p-t-12">
-						<span class="txt1">
-							Forgot
-						</span>
-						<a class="txt2" href="forgot_password.php">
-							Password?
-						</a>
-					</div>
-
-					<div class="text-center p-t-136">
-						<a class="txt2" href="rform.php">
-							Create your Account
-							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-						</a>
-					</div>
+					
 				</form>
-				<?php } ?>
+				
 			</div>
 		</div>
 	</div>
