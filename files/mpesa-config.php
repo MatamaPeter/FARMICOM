@@ -1,16 +1,16 @@
 <?php
-require_once 'vendor/autoload.php';
+require 'vendor/autoload.php';
 
-$consumerKey = 'gqVkKQRQmfzKHNH5SoEPMGkKTApm34rkTtK3fUlBG6AnIBYu'; // Replace with your Consumer Key
-$consumerSecret = 'FYvM3uzpa1AMsDrZdC4SaeJftShEXQI2n7mtHcvYG9841FSPhg5haSlEApDGJv0K'; // Replace with your Consumer Secret
+$consumerKey = 'G7RD0il4My4G76AGP2AZd0sZUvvkrxpg'; // Replace with your Consumer Key
+$consumerSecret = 's0G8fWDHg4VQfSu5'; // Replace with your Consumer Secret
 
 $env = 'sandbox'; // Use 'live' for production
 
-$mpesaConfig = [
+$mpesaConfig  = [
     'env' => $env,
     'customer_key' => $consumerKey,
     'customer_secret' => $consumerSecret,
-    'short_code' => 'YOUR_SHORTCODE', // Replace with your M-Pesa short code
-    'passkey' => 'YOUR_PASSKEY', // Replace with your M-Pesa passkey
+    'short_code' => '174379', // Replace with your M-Pesa short code
+    'passkey' => 'MTc0Mzc5YmZiMjc5TliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMTYwMjE2MTY1NjI3', // Replace with your M-Pesa passkey
 ];
 ?>

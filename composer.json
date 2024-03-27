@@ -1,6 +1,0 @@
-{
-    "require": {
-        "safaricom/mpesa": "^1.0",
-        "phpmailer/phpmailer": "^6.9"
-    }
-}

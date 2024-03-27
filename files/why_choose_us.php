@@ -111,6 +111,8 @@ if (isset($_SESSION['email'])) {
                                     <ul>
                                         <li><a href="cart.php">Cart</a></li>
                                         <li><a href="checkout.php">Checkout</a></li>
+                                        <li><a href="orders.php">Orders</a></li>
+
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 

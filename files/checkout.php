@@ -1,11 +1,20 @@
 <?php 
 session_start();
+
 require 'paypal-includes.php';
 require 'paypal-config.php';
+require 'mpesa-config.php';
+require 'vendor/autoload.php';
+
+
+
+
 include("config.php");
 
 use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 use PayPalHttp\HttpException;
+
+
 
 
 if (!isset($_SESSION['email'])) {
@@ -41,18 +50,138 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])) {
     $total = $_POST['cartprice'];
 
     if (isset($_POST['mpesa'])) {
-        $payment_id = mysqli_real_escape_string($con, "MPESA-" . uniqid());
-        $payment_method = "M-Pesa";
-    } elseif (isset($_POST['paypal'])) {
+
+        
+            $payment_method = "M-pesa";
+            $phone = mysqli_real_escape_string($con, $_POST['phone']);
+            $payment_id = "MPESA_" . uniqid();
+            $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
+        
+            if ($select_cart->num_rows !== 0) {
+                $subtotal = 0;
+                while ($cart_items = mysqli_fetch_assoc($select_cart)) {
+                    if (isset($cart_items['quantity']) && isset($cart_items['price'])) {
+                        $sub_total = ($cart_items['price']) * $cart_items['quantity'];
+                        $subtotal += $sub_total;
+                    }
+                    if ($subtotal >= 5000) {
+                        $Shipping_cost = 0;
+                    } else {
+                        $Shipping_cost = round(0.45 * $subtotal, 0);
+                    }
+                    $gtotal = $subtotal + $Shipping_cost;
+                    $amount = $gtotal;
+                }
+            }
+        
+            if (!preg_match('/^254\d{9}$/', $phone)) {
+                echo "<script>alert('Invalid phone number format. Please enter a valid Kenyan phone number starting with 254.');</script>";
+                exit;
+            }
+            function getAccessToken($consumer_key, $consumer_secret)
+        {
+            $credentials = base64_encode($consumer_key . ':' . $consumer_secret);
+        
+            $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+            $headers = [
+                'Authorization: Basic ' . $credentials
+            ];
+        
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+            $response = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+        
+            if ($http_code !== 200) {
+                return null;
+            }
+        
+            $response_data = json_decode($response, true);
+            return $response_data['access_token'];
+        }
+        
+            $consumer_key = 'G7RD0il4My4G76AGP2AZd0sZUvvkrxpg';
+            $consumer_secret = 's0G8fWDHg4VQfSu5';
+            $access_token = getAccessToken($consumer_key, $consumer_secret);
+        
+            if (!$access_token) {
+                echo "<script>alert('Failed to obtain access token from M-Pesa API');</script>";
+                exit;
+            }
+        
+            $business_short_code = '174379';
+            $passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
+            $timestamp = date("YmdHms"); // Get the current timestamp in the required format
+            $password = $business_short_code . $passkey . $timestamp;
+            $encoded_password = base64_encode($password);
+        
+            $ch = curl_init('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer ' . $access_token,
+                'Content-Type: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, [
+                "BusinessShortCode" => $business_short_code,
+                "Password" => $encoded_password,
+                "Timestamp" => $timestamp,
+                "TransactionType" => "CustomerPayBillOnline",
+                "Amount" => $amount,
+                "PartyA" => $phone,
+                "PartyB" => $business_short_code,
+                "PhoneNumber" => $phone,
+                "CallBackURL" => "https://mydomain.com/path",
+                "AccountReference" => $payment_id,
+                "TransactionDesc" => "Payment for order"
+            ]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+        
+        /**
+         * Function to get access token from M-Pesa API
+         *
+         * @param string $consumer_key
+         * @param string $consumer_secret
+         *
+         * @return string|null
+         */
+        
+         $payload = [
+            "BusinessShortCode" => $business_short_code,
+            "Password" => $encoded_password,
+            "Timestamp" => $timestamp,
+            "TransactionType" => "CustomerPayBillOnline",
+            "Amount" => $amount,
+            "PartyA" => $phone,
+            "PartyB" => $business_short_code,
+            "CallBackURL" => "https://mydomain.com/path",
+            "AccountReference" => $payment_id,
+            "TransactionDesc" => "Payment for order"
+        ];
+        
+        echo json_encode($payload, JSON_PRETTY_PRINT);
+    }elseif (isset($_POST['paypal'])) {
         $payment_id = mysqli_real_escape_string($con, "PAYPAL-" . uniqid());
         $payment_method = "PayPal";
     
         // Calculate $gtotal
-        $subtotal = 0;
-        foreach ($_POST['cartprice'] as $key => $price) {
-            $quantity = isset($_POST['cartquantity'][$key]) ? $_POST['cartquantity'][$key] : 1; // Assuming a default quantity of 1 if not provided
-            $sub_total = $price * $quantity;
-            $subtotal += $sub_total;
+        $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
+        if($select_cart->num_rows!==0){
+            $subtotal = 0;
+        while ($cart_items = mysqli_fetch_assoc($select_cart)) {
+            
+            
+
+            if (isset($cart_items['quantity']) && isset($cart_items['price'])) {
+                $sub_total = ($cart_items['price']) * $cart_items['quantity'] ;  
+                $subtotal += $sub_total;
         }
         if ($subtotal >= 5000) {
             $Shipping_cost = 0;
@@ -60,6 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])) {
             $Shipping_cost = round(0.45 * $subtotal, 0);
         }
         $gtotal = $subtotal + $Shipping_cost;
+        $amount = $gtotal;}}
     
         // Create a PayPal order
         $request = new OrdersCreateRequest();
@@ -69,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])) {
             'purchase_units' => array(
                 array(
                     'amount' => array(
-                        'currency_code' => 'KES', // Update with your desired currency code
+                        'currency_code' => 'USD', // Update with your desired currency code
                         'value' => $gtotal 
                     )
                 )
@@ -99,6 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])) {
         $stmt->bind_param("ssssssssssssss", $User_email, $country, $firstname, $lastname, $address, $building, $town, $orderDate, $payment_id, $payment_method, $payment_status, $order_status, $product, $price);
         if ($stmt->execute()) {
             echo "<script>alert('Order made successfully');</script>";
+            mysqli_query($con,"DELETE FROM cart WHERE username = '$username'");
         } else {
             echo "<script>alert('Order failed);</script>";
             echo "Error: " . $stmt->error;
@@ -208,6 +339,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])) {
                                     <ul>
                                         <li><a href="cart.php">Cart</a></li>
                                         <li><a href="checkout.php">Checkout</a></li>
+                                        <li><a href="orders.php">Orders</a></li>
+
                                     </ul><!-- /.sub-menu -->
                                 </li>
                                 
@@ -549,6 +682,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_btn'])) {
                                     <div class="col-xl-12">
                                         <div class="billing_input_box">
                                             <input type="text" name="address" value="" placeholder="Address" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <div class="billing_input_box">
+                                            <input type="tel" name="phone" value=""
+                                                placeholder="phone" required="">
                                         </div>
                                     </div>
                                     <div class="col-xl-12">

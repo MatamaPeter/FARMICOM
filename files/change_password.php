@@ -1,3 +1,6 @@
+<?php 
+include "change_password_process.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +32,7 @@
 				<div class="login100-pic js-tilt" data-tilt>
 					<img src="assets/images/img-01.png" alt="IMG">
 				</div>
-				<form class="login100-form validate-form" action="forgot_password_process.php" method="post">
+				<form class="login100-form validate-form" action="" method="post">
 						<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
 						<input class="input100" type="text" name="email" placeholder="Email">
 						<span class="focus-input100"></span>
@@ -47,7 +50,7 @@
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" name="reset">
+						<button class="login100-form-btn" name="change">
 							Change password
 						</button>
 					</div>

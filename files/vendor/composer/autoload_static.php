@@ -9,19 +9,30 @@ class ComposerStaticInita93fd4d640474a66eea42465cbf30482
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'Symfony\\Component\\Dotenv\\' => 25,
             'Sample\\' => 7,
+            'Safaricom\\Mpesa\\' => 16,
         ),
         'P' => 
         array (
             'PayPalHttp\\' => 11,
             'PayPalCheckoutSdk\\' => 18,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Component\\Dotenv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/dotenv',
+        ),
         'Sample\\' => 
         array (
             0 => __DIR__ . '/..' . '/paypal/paypal-checkout-sdk/samples',
+        ),
+        'Safaricom\\Mpesa\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/safaricom/mpesa/src',
         ),
         'PayPalHttp\\' => 
         array (
@@ -30,6 +41,10 @@ class ComposerStaticInita93fd4d640474a66eea42465cbf30482
         'PayPalCheckoutSdk\\' => 
         array (
             0 => __DIR__ . '/..' . '/paypal/paypal-checkout-sdk/lib/PayPalCheckoutSdk',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
     );
 

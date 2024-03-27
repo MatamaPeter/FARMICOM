@@ -1,5 +1,8 @@
 {
     "require": {
-        "paypal/paypal-checkout-sdk": "1.0.1"
+        "paypal/paypal-checkout-sdk": "1.0.1",
+        "phpmailer/phpmailer": "^6.9",
+        "safaricom/mpesa": "^1.0",
+        "symfony/dotenv": "^7.0"
     }
 }

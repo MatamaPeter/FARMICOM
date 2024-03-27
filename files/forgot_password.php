@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Famricom Forgost password</title>
+	<title>Farmicom</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -30,13 +30,21 @@
 					<img src="assets/images/img-01.png" alt="IMG">
 				</div>
 				
-				<form class="login100-form validate-form">
-								
+				
+				<form class="login100-form validate-form" action="forgot_password_process.php" method="post">
+						<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text" name="email" placeholder="Email">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					
 					<div class="container-login100-form-btn">
-                  
-						Password reset successful
-						<a href="lform.php" class="login100-form-btn">login</a>
-						
+						<button class="login100-form-btn" name="reset">
+							Reset
+						</button>
 					</div>
 
 					

@@ -16,34 +16,7 @@ if (isset($_SESSION['email'])) {
     $username = "guest";
 }
 
-if (isset($_POST['update'])) {
-    if (isset($_SESSION['email'])) {
-        $username = $_SESSION['email'];
-      
-        foreach ($_POST['cart_id'] as $key => $cartId) {
-            $quantity = $_POST['quantity'][$cartId];
-            $update_query = mysqli_query($con, "UPDATE cart SET quantity = '$quantity' WHERE id = '$cartId' AND username = '$username'");
-        }
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit;
-    }
-}
-// Check if the delete button is clicked
-if (isset($_POST['delete'])) {
-    if (isset($_SESSION['email'])) {
-        $username = $_SESSION['email'];
-        
-        // Retrieve cart ID of the item to be deleted
-        $cartId = $_POST['delete'];
 
-        // Construct and execute DELETE SQL query
-        $delete_query = mysqli_query($con, "DELETE FROM cart WHERE id = '$cartId' AND username = '$username'");
-        
-        // Redirect to the same page after deletion
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit;
-    }
-}
 
 
 ?>
@@ -196,11 +169,11 @@ if (isset($_POST['delete'])) {
         </div>
         <section class="page-header" style="background-image: url(assets/images/backgrounds/page-header-contact.jpg);">
             <div class="container">
-                <h2>Cart</h2>
+                <h2>ORDERS</h2>
                 <ul class="thm-breadcrumb list-unstyled">
                     <li><a href="index.php">Home</a></li>
                     <li><a href="" class="shop_style">Shop</a></li>
-                    <li><span>Cart</span></li>
+                    <li><span>Orders</span></li>
                 </ul>
             </div>
         </section>
@@ -211,71 +184,41 @@ if (isset($_POST['delete'])) {
                         <div class="cart_table_box">
                         <table class="cart_table">
     <thead class="cart_table_head">
-        <?php
-    if (isset($_SESSION['email'])) {
-        $username = $_SESSION['email'];
-        $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
-        if($select_cart->num_rows!==0){
-            ?>
-            <tr>
-                <th>Item</th>
-                <th></th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th>Remove</th>
-            </tr>
-    <?php 
-        }
-    } else {
-        echo "";
-    }
-    ?>
-    
-   
+    <tr>
+      <th class="px-4 py-2">Product</th>
+      <th class="px-4 py-2">Order date</th>
+      <th class="px-4 py-2">Amount</th>
+      <th class="px-4 py-2">Payment Id</th>
+      <th class="px-4 py-2">Payment status</th>
+      <th class="px-4 py-2">Order status</th>
+    </tr>
+
                     </thead>
-                    <tbody><?php
+                    <?php
 if (isset($_SESSION['email'])) {
     $username = $_SESSION['email'];
-    $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
-    $subtotal = 0; // Initialize $subtotal to 0
-    if ($select_cart->num_rows !== 0) {
-        while ($cart_items = mysqli_fetch_assoc($select_cart)) {
-            if (isset($cart_items['quantity']) && isset($cart_items['price'])) {
-                $item_subtotal = $cart_items['price'] * $cart_items['quantity'];
-                $subtotal += $item_subtotal; // Add the item subtotal to the overall subtotal
+    $select_order = mysqli_query($con, "SELECT * FROM orders WHERE user_email = '$username'");
+    if ($select_order->num_rows !== 0) {
+        while ($order_items = mysqli_fetch_assoc($select_order)) {
+           
 ?>
-                <tr>
-                    <td colspan="2">
-                        <div class="colum_box">
-                            <div class="prod_thum">
-                                <a href="#"><img src="<?php echo $cart_items['image']; ?>" alt=""></a>
-                            </div>
-                            <div class="title">
-                                <h3 class="prod-title"><?php echo $cart_items['name']; ?></h3>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="pro_price">KES <?php echo $cart_items['price']; ?></td>
-                    <td class="pro_qty">
-                        <div class="product-quantity-box">
-                            <div class="input-box">
-                                <input type="hidden" name="cart_id[]" value="<?php echo $cart_items['id']; ?>">
-                                <input class="quantity-spinner" type="text" value="<?php echo $cart_items['quantity']; ?>" name="quantity[<?php echo $cart_items['id']; ?>]">
-                            </div>
-                        </div>
-                    </td>
-                    <td class="pro_sub_total">KES <?php echo $item_subtotal; ?></td>
-                    <td>
-                        <div class="pro_remove">
-                            <button class="btn_delete" type="submit" name="delete" value="<?php echo $cart_items['id']; ?>"><i class="fas fa-times"></i></button>
-                        </div>
-                    </td>
-                </tr>
+<tbody>
+    <tr class="cart_table_head">
+      <td class="border px-4 py-2"><?php echo $order_items['product']; ?></td>
+      <td class="border px-4 py-2"><?php echo $order_items['orderDate']; ?></td>
+      <td class="border px-4 py-2"><?php echo $order_items['total']; ?></td>
+      <td class="border px-4 py-2"><?php echo $order_items['payment_id']; ?></td>
+      <td class="border px-4 py-2"><?php echo $order_items['payment_status']; ?></td>
+      <td class="border px-4 py-2"><?php echo $order_items['order_status']; ?></td>
+    </tr>
+   
+  </tbody>
+
+
 <?php
             }
         }
-    } else {
+     else {
         echo "<centre><h1>Cart is empty</h1></centre>";
     }
 } else {
@@ -286,49 +229,7 @@ if (isset($_SESSION['email'])) {
 </div>
 </div>
 </div>
-<div class="row cart_apply_coupon_box">
-<div class="row">
-<div class="col-xl-12">
-<div class="button_box">
-<?php
-$select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
-if ($select_cart->num_rows !== 0) {
-?>
-<button class="thm-btn update_btn" type="submit" name="update">Update</button>
-<button onclick="redirectToCheckout()" class="thm-btn checkout_btn" type="button" name="checkout">Checkout</button>
 
-<script>
-    // JavaScript function to redirect to checkout.php
-    function redirectToCheckout() {
-        // Redirect to the checkout.php page
-        window.location.href = "checkout.php";
-    }
-</script>
-</div>
-</div>
-</div>
-<div class="col-xl-6">
-<ul class="total_box list-unstyled">
-<li><span>Subtotal</span> <?php echo "KES " . $subtotal; ?></li>
-<li><span>Shipping Cost</span> <?php
-                                if ($subtotal >= 5000) {
-                                    $Shipping_cost = 0;
-                                } else {
-                                    $Shipping_cost = round(0.45 * $subtotal, 0);
-                                }
-                                echo "KES " . $Shipping_cost;
-                                ?></li>
-<li><span>Total</span><?php echo "KES " . ($gtotal = $subtotal + $Shipping_cost); ?> </li>
-<?php
-} else {
-    echo "";
-}
-?>
-                        </ul>
-                    </div>
-                </div>
-                
-            </div>
         </section>
         </form>
         <footer class="site-footer">
@@ -500,7 +401,6 @@ if ($select_cart->num_rows !== 0) {
     <script src="assets/js/appear.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
     <script src="assets/js/jquery.bootstrap-touchspin.js"></script>
-
 
     <!-- template scripts -->
     <script src="assets/js/theme.js"></script>
