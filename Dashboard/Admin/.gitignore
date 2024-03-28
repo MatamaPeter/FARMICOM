@@ -1,0 +1,6 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+checkout.php
+forgot_password process.php
+/node_modules
+/bower_components
+package-lock.json
