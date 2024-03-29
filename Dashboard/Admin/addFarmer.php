@@ -11,7 +11,55 @@ if (!isset($_SESSION['email'])) {
 }
 
 
- ?>
+
+if(isset($_POST['addfarmer'])) {
+  // Check if a photo file has been uploaded and if there is no error
+  if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+      $uploadDir = 'uploads/farmers-pics/'; // Ensure the directory ends with a slash
+      $uploadFile = $uploadDir . basename($_FILES['photo']['name']); 
+      
+      // Move the uploaded file to the specified directory
+      if(move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
+          // If the file was successfully uploaded, proceed with inserting data into the database
+          $photo = $uploadFile;
+          $fname = mysqli_real_escape_string($con, $_POST['fname']);
+          $lname = mysqli_real_escape_string($con, $_POST['lname']);
+          $email = mysqli_real_escape_string($con, $_POST['email']);
+          $phone = mysqli_real_escape_string($con, $_POST['phone']);
+          $id_number = mysqli_real_escape_string($con, $_POST['id_number']);
+          $address = mysqli_real_escape_string($con, $_POST['address']);
+          $usertype = "Farmer";
+          $password = mysqli_real_escape_string($con, $_POST['id_number']); // Consider hashing the password
+          $hpassword = password_hash($password, PASSWORD_DEFAULT);
+          $unique_identifier = time(); 
+          $member_number = "MEM-". $unique_identifier;
+
+          // Perform the database insertion
+          $query = "INSERT INTO farmers (Photo, Member_number, National_id, Firstname, Lastname, Phone, Email, Address, Password, Usertype) VALUES ('$photo', '$member_number', '$id_number', '$fname', '$lname', '$phone', '$email', '$address', '$hpassword', '$usertype')";
+          
+          if(mysqli_query($con, $query)) {
+              // If insertion is successful, display success message
+              echo "<script>alert('Farmer added successfully.');</script>";
+          } else {
+              // If insertion fails, display an error message
+              echo "<script>alert('Failed to add farmer to the database: " . mysqli_error($con) . "');</script>";
+          }
+      } else {
+          // If moving the uploaded file fails, display an error message
+          echo "<script>alert('Failed to move uploaded file.');</script>";
+      }
+  } else {
+      // If no file was uploaded or an error occurred during upload, display an error message
+      echo "<script>alert('No file uploaded or file upload error occurred.');</script>";
+  }
+}
+
+
+
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -182,9 +230,10 @@ if (!isset($_SESSION['email'])) {
             <div class="page-header">
               <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
-                  <i class="mdi mdi-worker"></i>
-                </span> Farmers
-               
+                  <i class="mdi mdi-plus"></i>
+                </span> Add Farmer 
+
+                
               </h3>
               <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
@@ -192,61 +241,85 @@ if (!isset($_SESSION['email'])) {
                 </ul>
               </nav>
             </div>
-            <div class="col-lg-12 grid-margin stretch-card">
+            <div class="col-12">
                 <div class="card">
                   <div class="card-body">
-                  <a href="addFarmer.php"><button type="button" class="btn-add-farmer btn-icon-text">
-                            <i class="mdi mdi-file-plus btn-icon-prepend"></i> New farmer </button></a>
-                      <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th> Photo </th>
-                          <th> Member No. </th>
-                          <th> Name </th>
-                          <th> Phone </th>
-                          <th> Email </th>
-                          <th> Action </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php
-                          $select_farmers = mysqli_query($con, "SELECT * FROM farmers") or die ("Query failed");
-                          while($farmers_dtls = $select_farmers->fetch_assoc()){
-
-                        ?>
-                        <form action="editFarmer.php" method="post">
+                    <form class="form-sample" action="" method="post" enctype="multipart/form-data">
+                        <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">First Name</label>
+                            <div class="col-sm-9">
+                              <input type="text" name="fname" class="form-control" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Last Name</label>
+                            <div class="col-sm-9">
+                              <input type="text" name="lname"  class="form-control" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Email</label>
+                            <div class="col-sm-9">
+                              <input type="email" name="email" class="form-control" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Phone</label>
+                            <div class="col-sm-9">
+                              <input type="tel" name="phone" class="form-control" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">ID Number</label>
+                            <div class="col-sm-9">
+                              <input type="number" name="id_number" class="form-control" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Address</label>
+                            <div class="col-sm-9">
+                              <input type="text" name="address" class="form-control"/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Photo</label>
+                            <div class="col-sm-9">
+                              <input type="file" name="photo" class="form-control" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    
+                      <center><button name="addfarmer" type="submit" class="btn btn-gradient-primary mb-2">Submit</button></center>
                         
-                        <tr>
-                          <td class="py-1">
-                            <img src="<?php echo $farmers_dtls['Photo']?>" alt="image" />
-                          </td>
-                          <td> <?php echo $farmers_dtls['Member_number']?>
-                          <input type="hidden" name="mem_no" value="<?php echo $farmers_dtls['Member_number']?>">
-                          </td>
-                          <td> <?php echo $farmers_dtls['Firstname']?> <?php echo $farmers_dtls['Lastname']?></td>
-                          <td> <?php echo $farmers_dtls['Phone']?></td>
-                          <td> <?php echo $farmers_dtls['Email']?></td>
-                          
-                          <td> 
-                            <button type="submit" name="edit_farmer" class="btn-tbl-farmers btn-icon-text">
-                              <i class="mdi mdi-file-check btn-icon-prepend"></i> Edit </button></a>
-                            <button type="submit" name="delete" class="btn-icon-text btn-tbl-farmers-dg">
-                            <i class="mdi mdi-delete btn-icon-prepend"></i></button>
-                            
-                          </td>
-                          
-                        </tr>
                         
-                        </form>
-                        <?php } ?>
-                         
-                      </tbody>
-                    </table>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
+              
+         <!-- partial:partials/_footer.html -->
           <footer class="footer">
             <div class="container-fluid d-flex justify-content-between">
               <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © Farmicom.com 2024</span>
@@ -255,6 +328,7 @@ if (!isset($_SESSION['email'])) {
           <!-- partial -->
         </div>
         <!-- main-panel ends -->
+        
       </div>
       <!-- page-body-wrapper ends -->
     </div>

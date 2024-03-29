@@ -10,8 +10,17 @@ if (!isset($_SESSION['email'])) {
   $username = $_SESSION['email'];
 }
 
+if(isset($_POST['updateuser'])){
 
- ?>
+$uname = mysqli_real_escape_string($con, $_POST['uname']);
+$email = mysqli_real_escape_string($con, $_POST['email']);
+$phone = mysqli_real_escape_string($con, $_POST['phone']);
+$password = mysqli_real_escape_string($con, $_POST['password']);
+$hpassword = password_hash($password, PASSWORD_DEFAULT);
+
+mysqli_query($con, "UPDATE users SET Username='$uname', Email='$email', Phone='$phone', Password='$hpassword'");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -182,8 +191,15 @@ if (!isset($_SESSION['email'])) {
             <div class="page-header">
               <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
-                  <i class="mdi mdi-worker"></i>
-                </span> Farmers
+                  <i class="mdi mdi-account"></i>
+                </span> Profile 
+
+                <?php
+
+                $select_user = mysqli_query($con, "SELECT * FROM users WHERE Email = '$username'") or die ("Query failed");
+                $user_dtls = $select_user->fetch_assoc() ;
+                    
+                ?>
                
               </h3>
               <nav aria-label="breadcrumb">
@@ -192,60 +208,31 @@ if (!isset($_SESSION['email'])) {
                 </ul>
               </nav>
             </div>
-            <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
+            <div class="card">
                   <div class="card-body">
-                  <a href="addFarmer.php"><button type="button" class="btn-add-farmer btn-icon-text">
-                            <i class="mdi mdi-file-plus btn-icon-prepend"></i> New farmer </button></a>
-                      <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th> Photo </th>
-                          <th> Member No. </th>
-                          <th> Name </th>
-                          <th> Phone </th>
-                          <th> Email </th>
-                          <th> Action </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php
-                          $select_farmers = mysqli_query($con, "SELECT * FROM farmers") or die ("Query failed");
-                          while($farmers_dtls = $select_farmers->fetch_assoc()){
-
-                        ?>
-                        <form action="editFarmer.php" method="post">
-                        
-                        <tr>
-                          <td class="py-1">
-                            <img src="<?php echo $farmers_dtls['Photo']?>" alt="image" />
-                          </td>
-                          <td> <?php echo $farmers_dtls['Member_number']?>
-                          <input type="hidden" name="mem_no" value="<?php echo $farmers_dtls['Member_number']?>">
-                          </td>
-                          <td> <?php echo $farmers_dtls['Firstname']?> <?php echo $farmers_dtls['Lastname']?></td>
-                          <td> <?php echo $farmers_dtls['Phone']?></td>
-                          <td> <?php echo $farmers_dtls['Email']?></td>
-                          
-                          <td> 
-                            <button type="submit" name="edit_farmer" class="btn-tbl-farmers btn-icon-text">
-                              <i class="mdi mdi-file-check btn-icon-prepend"></i> Edit </button></a>
-                            <button type="submit" name="delete" class="btn-icon-text btn-tbl-farmers-dg">
-                            <i class="mdi mdi-delete btn-icon-prepend"></i></button>
-                            
-                          </td>
-                          
-                        </tr>
-                        
-                        </form>
-                        <?php } ?>
-                         
-                      </tbody>
-                    </table>
+                    <form class="forms-sample" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+                      <div class="form-group">
+                        <label for="exampleInputName1">Name</label>
+                        <input type="text" class="form-control" id="exampleInputName1" name="uname" value="<?php echo $user_dtls['Username'] ?>" placeholder="<?php echo $user_dtls['Username'] ?>" readonly>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail3">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail3" name="email"  value="<?php echo $user_dtls['Email'] ?>" placeholder="<?php echo $user_dtls['Email'] ?>" readonly>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword4">Phone</label>
+                        <input type="password" class="form-control" id="exampleInputPassword4" name="phone"  placeholder="<?php echo $user_dtls['Phone'] ?>">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword4">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword4" name="password"  placeholder="Password">
+                      </div>
+                                            
+                      <input name="updateuser" type="submit" class="btn btn-gradient-primary me-2" value="Update">
+                      
+                    </form>
                   </div>
-                </div>
-              </div>
-          <!-- content-wrapper ends -->
+                </div>  <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
             <div class="container-fluid d-flex justify-content-between">
@@ -255,6 +242,7 @@ if (!isset($_SESSION['email'])) {
           <!-- partial -->
         </div>
         <!-- main-panel ends -->
+        
       </div>
       <!-- page-body-wrapper ends -->
     </div>

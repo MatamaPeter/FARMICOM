@@ -200,10 +200,10 @@ if (isset($_SESSION['email'])) {
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="team_one_single wow fadeInUp">
                         <div class="team_one_image">
-                            <img src="Dashboard/Admin/<?php echo $farmer['Photo']; ?>" alt="image">
+                        <img src="Dashboard/Admin/<?php echo $farmer['Photo']; ?>" alt="image">
                         </div>
                         <div class="team_one_deatils">
-                            <p>Farmer</p><img src="Dashboard/Admin/<?php echo $farmer['Photo']; ?>" alt="image">
+                            <p>Farmer</p>
                             <h2><a href="#"><?php echo $farmer['Firstname'] . ' ' . $farmer['Lastname']; ?></a></h2>
                             
                         </div>

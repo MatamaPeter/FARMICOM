@@ -10,8 +10,49 @@ if (!isset($_SESSION['email'])) {
   $username = $_SESSION['email'];
 }
 
+if (isset($_POST['delete'])) {
 
- ?>
+  $mem_number = mysqli_real_escape_string($con, $_POST['mem_no']);
+  
+  $delete_query = mysqli_query($con, "DELETE FROM farmers WHERE Member_number = '$mem_number'");
+  
+  header("Location:farmers.php");
+  exit;
+}
+
+if(isset($_POST['updatefarmer'])) {
+    if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = 'uploads/farmers-pics'; 
+        $uploadFile = $uploadDir . basename($_FILES['photo']['name']);
+
+        if(move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
+            $photo = $uploadFile;
+            $email = mysqli_real_escape_string($con, $_POST['email']);
+            $phone = mysqli_real_escape_string($con, $_POST['phone']);
+            $address = mysqli_real_escape_string($con, $_POST['address']);
+            $mem_number = mysqli_real_escape_string($con, $_POST['mem_no']);
+            
+
+            mysqli_query($con, 
+                "UPDATE farmers SET 
+                Photo = '$photo',
+                Phone = '$phone',
+                Email = '$email',
+                Address = '$address'
+                WHERE Member_number = '$mem_number'" 
+          );
+
+            echo "Details updated successfully.";
+            header("location:farmers.php");
+            exit;
+          } else {
+            echo "<script>alert('Failed to move uploaded file.')</script>";
+          }
+      } else {
+        echo "<script>alert('No file uploaded or file upload error occurred')</script>";
+      }
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -182,9 +223,10 @@ if (!isset($_SESSION['email'])) {
             <div class="page-header">
               <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
-                  <i class="mdi mdi-worker"></i>
-                </span> Farmers
-               
+                  <i class="mdi mdi-plus"></i>
+                </span> Add Farmer 
+
+                
               </h3>
               <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
@@ -192,61 +234,97 @@ if (!isset($_SESSION['email'])) {
                 </ul>
               </nav>
             </div>
-            <div class="col-lg-12 grid-margin stretch-card">
+            <div class="col-12">
                 <div class="card">
                   <div class="card-body">
-                  <a href="addFarmer.php"><button type="button" class="btn-add-farmer btn-icon-text">
-                            <i class="mdi mdi-file-plus btn-icon-prepend"></i> New farmer </button></a>
-                      <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th> Photo </th>
-                          <th> Member No. </th>
-                          <th> Name </th>
-                          <th> Phone </th>
-                          <th> Email </th>
-                          <th> Action </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php
-                          $select_farmers = mysqli_query($con, "SELECT * FROM farmers") or die ("Query failed");
-                          while($farmers_dtls = $select_farmers->fetch_assoc()){
+                    <?php
+                    if(isset($_POST['edit_farmer'])){
 
-                        ?>
-                        <form action="editFarmer.php" method="post">
+                      $mem_no = $_POST['mem_no'];
+                    
+
+                    $select_farmers = mysqli_query($con, "SELECT * FROM farmers WHERE Member_number= '$mem_no'") or die ("Query failed");
+                    $farmers_dtls = $select_farmers->fetch_assoc();
+
+                    ?>
+                    <form class="form-sample" action="" method="post" enctype="multipart/form-data">
+                        <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">First Name</label>
+                            <div class="col-sm-9">
+                              <input type="text" name="fname" class="form-control" value="<?php echo $farmers_dtls['Firstname']?>" placeholder="<?php echo $farmers_dtls['Firstname']?>" readonly/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Last Name</label>
+                            <div class="col-sm-9">
+                              <input type="text" name="lname"  class="form-control" value="<?php echo $farmers_dtls['Lastname']?>" placeholder="<?php echo $farmers_dtls['Lastname']?>" readonly />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Email</label>
+                            <div class="col-sm-9">
+                              <input type="email" name="email" class="form-control" placeholder="<?php echo $farmers_dtls['Email']?>" required/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Phone</label>
+                            <div class="col-sm-9">
+                              <input type="tel" name="phone" class="form-control" placeholder="<?php echo $farmers_dtls['Phone']?>" required />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">ID Number</label>
+                            <div class="col-sm-9">
+                              <input type="number" name="id_number" class="form-control" value="<?php echo $farmers_dtls['National_id']?>" placeholder="<?php echo $farmers_dtls['National_id']?>" readonly required />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Address</label>
+                            <div class="col-sm-9">
+                              <input type="text" name="address" class="form-control" placeholder="<?php echo $farmers_dtls['Address']?>" required/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Photo</label>
+                            <div class="col-sm-9">
+                              <input type="file" name="photo" class="form-control" required />
+                              <input type="text" name="mem_no"  class="form-control" value="<?php echo $farmers_dtls['Member_number']?>" hidden />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    
+                      <center><button name="updatefarmer" type="submit" class="btn btn-gradient-primary mb-2">Submit</button></center>
                         
-                        <tr>
-                          <td class="py-1">
-                            <img src="<?php echo $farmers_dtls['Photo']?>" alt="image" />
-                          </td>
-                          <td> <?php echo $farmers_dtls['Member_number']?>
-                          <input type="hidden" name="mem_no" value="<?php echo $farmers_dtls['Member_number']?>">
-                          </td>
-                          <td> <?php echo $farmers_dtls['Firstname']?> <?php echo $farmers_dtls['Lastname']?></td>
-                          <td> <?php echo $farmers_dtls['Phone']?></td>
-                          <td> <?php echo $farmers_dtls['Email']?></td>
-                          
-                          <td> 
-                            <button type="submit" name="edit_farmer" class="btn-tbl-farmers btn-icon-text">
-                              <i class="mdi mdi-file-check btn-icon-prepend"></i> Edit </button></a>
-                            <button type="submit" name="delete" class="btn-icon-text btn-tbl-farmers-dg">
-                            <i class="mdi mdi-delete btn-icon-prepend"></i></button>
-                            
-                          </td>
-                          
-                        </tr>
                         
-                        </form>
-                        <?php } ?>
-                         
-                      </tbody>
-                    </table>
+                      </div>
+                    </form>
+                    <?php }?>
                   </div>
                 </div>
               </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
+              
+         <!-- partial:partials/_footer.html -->
           <footer class="footer">
             <div class="container-fluid d-flex justify-content-between">
               <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © Farmicom.com 2024</span>
@@ -255,6 +333,7 @@ if (!isset($_SESSION['email'])) {
           <!-- partial -->
         </div>
         <!-- main-panel ends -->
+        
       </div>
       <!-- page-body-wrapper ends -->
     </div>

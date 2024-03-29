@@ -98,7 +98,11 @@ if (!isset($_SESSION['email'])) {
                 
                 <a class="dropdown-item" href="logout.php">
                   <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
+                  <a class="dropdown-item" href="profile.php">
+                  <i class="mdi mdi-account me-2 text-primary"></i> Profile </a>
+                  
               </div>
+              
             </li>
             <li class="nav-item d-none d-lg-block full-screen-link">
               <a class="nav-link">

@@ -3368,6 +3368,25 @@ progress {
   --bs-table-accent-bg: var(--bs-table-striped-bg);
   color: var(--bs-table-striped-color); }
 
+.btn-tbl-farmers-dg, .btn-tbl-farmers, .btn-add-farmer{
+  border-radius: 6px;
+  border:none;
+  cursor: pointer;
+  padding: 5px;
+  color: white;
+}
+.btn-add-farmer{
+  background-color: green;
+  font-weight: bold;
+  padding: 8px 15px;
+}
+.btn-tbl-farmers-dg{
+  background-color: #fa5353;
+
+} .btn-tbl-farmers{
+  background-color: green;
+}
+
 .table-active {
   --bs-table-accent-bg: var(--bs-table-active-bg);
   color: var(--bs-table-active-color); }
