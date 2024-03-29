@@ -147,6 +147,12 @@ if (!isset($_SESSION['email'])) {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="categories.php">
+                <span class="menu-title">Supplies</span>
+                <i class="mdi mdi-truck-delivery menu-icon"></i>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="messages.php">
                 <span class="menu-title">Messages</span>
                 <i class="mdi mdi-email menu-icon"></i>
