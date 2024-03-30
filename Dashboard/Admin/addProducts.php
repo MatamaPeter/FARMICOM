@@ -10,6 +10,7 @@ if (!isset($_SESSION['email'])) {
   $username = $_SESSION['email'];
 }
 
+
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,9 +101,7 @@ if (!isset($_SESSION['email'])) {
                   <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
                   <a class="dropdown-item" href="profile.php">
                   <i class="mdi mdi-account me-2 text-primary"></i> Profile </a>
-                  
               </div>
-              
             </li>
             <li class="nav-item d-none d-lg-block full-screen-link">
               <a class="nav-link">
@@ -151,7 +150,7 @@ if (!isset($_SESSION['email'])) {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="Supplies.php">
+              <a class="nav-link" href="categories.php">
                 <span class="menu-title">Supplies</span>
                 <i class="mdi mdi-truck-delivery menu-icon"></i>
               </a>
@@ -165,10 +164,11 @@ if (!isset($_SESSION['email'])) {
             <li class="nav-item">
               <a class="nav-link" href="products.php">
                 <span class="menu-title">Products</span>
-                <i class="mdi mdi mdi-basketmenu-icon"></i>
+                <i class="mdi mdi mdi-basket menu-icon"></i>
               </a>
             </li>
             
+
           </ul>
         </nav>
         <!-- partial -->
@@ -177,8 +177,8 @@ if (!isset($_SESSION['email'])) {
             <div class="page-header">
               <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
-                  <i class="mdi mdi-home"></i>
-                </span> Dashboard
+                  <i class="mdi mdi mdi-basket"></i>
+                </span> Add products
                
               </h3>
               <nav aria-label="breadcrumb">
@@ -188,192 +188,63 @@ if (!isset($_SESSION['email'])) {
               </nav>
             </div>
             <div class="row">
-              <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-danger card-img-holder text-white">
-                  <div class="card-body">
-                    <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <?php
-                     $total_paid = 0;
-                     $select_orders =mysqli_query($con, "SELECT * FROM orders WHERE payment_status='complete'");
-                     while($sum_paid = $select_orders->fetch_assoc()){
-                      $total_paid += $sum_paid['total'];
-                     }
-
-
-                     ?>
-                    <h4 class="font-weight-normal mb-3">Total Paid <i class="mdi mdi-chart-line mdi-24px float-right"></i>
-                    </h4>
-                    <h2 class="mb-5">KES. <?php echo $total_paid?></h2>
-                    <h6 class="card-text">Total for all cleared orders</h6>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-info card-img-holder text-white">
-                  <div class="card-body">
-                    <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <?php
-                    $total_pending = 0;
-                     $select_orders =mysqli_query($con, "SELECT * FROM orders WHERE payment_status='pending'");
-                     while($sum_paid = $select_orders->fetch_assoc()){
-                      $total_pending += $sum_paid['total'];
-                     }
-                     ?>
-                    <h4 class="font-weight-normal mb-3">Pendings Bills <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
-                    </h4>
-                    <h2 class="mb-5">KES. <?php echo $total_pending?></h2>
-                    <h6 class="card-text">Amount for all pending orders</h6>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-success card-img-holder text-white">
-                  <div class="card-body">
-                    <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <?php 
-                    
-                     $select_orders =mysqli_query($con, "SELECT * FROM orders WHERE order_status='processing'");
-                     $order_pending = $select_orders->num_rows;
-                     
-                     ?>
-                    <h4 class="font-weight-normal mb-3">Pending orders<i class="mdi mdi-diamond mdi-24px float-right"></i>
-                    </h4>
-                    <h2 class="mb-5"><?php echo $order_pending?> Orders</h2>
-                    <h6 class="card-text">Orders not dispatched</h6>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-7 grid-margin stretch-card">
+              <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <div class="clearfix">
-                      <h4 class="card-title float-left">Sales Statistics</h4>
-                      <?php
+                    <h4 class="card-title">Add Product</h4>
+                   
+                    <form class="forms-sample" action="addProduct.php" method="post" enctype="multipart/form-data">
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Name</label>
+                        <input type="text" class="form-control" name="product" id="exampleInputUsername1" placeholder="Product name">
+                      </div>
+                      <div class="form-group">
                          
-                          $query = "SELECT DATE_FORMAT(orderDate, '%b') AS month, COUNT(*) AS num_orders 
-                                    FROM orders 
-                                    GROUP BY DATE_FORMAT(orderDate, '%b')";
-                          $result = mysqli_query($con, $query);
-
-                          // Initialize arrays to store the months and corresponding orders
-                          $months = [];
-                          $orders = [];
-
-                          // Fetch data and populate the arrays
-                          while ($row = mysqli_fetch_assoc($result)) {
-                              $months[] = $row['month'];
-                              $orders[] = $row['num_orders'];
-                          }
-
-                          // Convert the PHP arrays to JSON format
-                          $monthsJSON = json_encode($months);
-                          $ordersJSON = json_encode($orders);
-                          ?>
-                      <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div>
-                    <canvas id="visit-sale-chart" class="mt-4"></canvas>
+                        <label for="exampleInputEmail1">Category</label>
+                        <select class="form-control" name="category" id="">
+                             <option selected value="">Select category</option>
+                             <?php
+                              $select_category = mysqli_query($con, "SELECT * FROM category");
+                              while($category_dtls=$select_category->fetch_assoc()){
+                             ?>
+                             <option value="<?php echo $category_dtls['Category']?>"><?php echo $category_dtls['Category']?></option>
+                             <?php } ?>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Price</label>
+                        <input type="number" class="form-control" name="price" id="exampleInputPassword1" placeholder="Price">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputConfirmPassword1">Buying price</label>
+                        <input type="number" class="form-control" name="bp" id="exampleInputConfirmPassword1" placeholder="Buying Price">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputConfirmPassword1">Image</label>
+                        <input type="file" class="form-control" name="photo"  placeholder="Product image">
+                      </div>
+                      
+                      <button type="submit" name="addproduct" class="btn btn-gradient-primary me-2">Submit</button>
+                    </form>
                   </div>
                 </div>
               </div>
-              <div class="col-md-5 grid-margin stretch-card">
+              <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Today/Yesterday Comparison</h4>
-                    <?php
-
-
-                        // Get yesterday and today's date
-                        $yesterday = date('Y-m-d', strtotime("-1 days"));
-                        $today = date('Y-m-d');
-
-                        // Fetch yesterday's and today's records from the orders table
-                        $sql_yesterday = "SELECT COUNT(*) AS yesterday_count FROM orders WHERE DATE(orderDate) = '$yesterday'";
-                        $sql_today = "SELECT COUNT(*) AS today_count FROM orders WHERE DATE(orderDate) = '$today'";
-
-                        $result_yesterday = $con->query($sql_yesterday);
-                        $result_today = $con->query($sql_today);
-
-                        $yesterday_count = 0;
-                        $today_count = 0;
-
-                        if ($result_yesterday->num_rows > 0) {
-                            $row = $result_yesterday->fetch_assoc();
-                            $yesterday_count = $row['yesterday_count'];
-                        }
-
-                        if ($result_today->num_rows > 0) {
-                            $row = $result_today->fetch_assoc();
-                            $today_count = $row['today_count'];
-                        }
-
-                    
-
-                        // Prepare data to be sent as JSON
-                        $data = array(
-                            'yesterday_count' => $yesterday_count,
-                            'today_count' => $today_count
-                        );
-
-                        ?>
-
-
-                    <canvas id="traffic-chart"></canvas>
-                    <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4"></div>
+                    <h4 class="card-title">Add Category</h4>
+                    <form class="forms-sample" action="addProduct.php" method="post">
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Category</label>
+                        <input type="text" class="form-control" name="category" id="exampleInputUsername1" placeholder="Category">
+                      </div>
+                      
+                      <button type="submit" name="addcategory" class="btn btn-gradient-primary me-2">Submit</button>
+                    </form>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-12 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Recent Orders</h4>
-                    <div class="table-responsive">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th> User </th>
-                            <th> Product </th>
-                            <th> Payment status </th>
-                            <th> Order Status </th>
-                            <th> Payment ID </th>
-                            <th> Amount </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                          $select_latest_orders = mysqli_query($con,"SELECT * FROM ORDERS LIMIT 10") or die("Query failed");
-                          while($order_dtls=$select_latest_orders->fetch_assoc()){                      
-                          
-                          ?>
-                          <tr>
-                            <td> <?php echo $order_dtls['User_email'] ?></td>
-                            <td> <?php echo $order_dtls['product'] ?></td>
-                            <td>
-                              <?php if($order_dtls['payment_status']=='complete'){
-                                echo " <label class='badge badge-gradient-success'>DONE</label>";
-                              }elseif ($order_dtls['payment_status']== 'pending') {
-                                echo " <label class='badge badge-gradient-danger'>PENDING</label>";
-                              }
-                                ?>
-                            </td>
-                            <td><?php echo $order_dtls['order_status'] ?> </td>
-                            <td> <?php echo $order_dtls['payment_id'] ?> </td>
-                            <td> <?php echo $order_dtls['total'] ?> </td>
-                          </tr>
-                            <?php } ?>
-                     
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
@@ -382,6 +253,7 @@ if (!isset($_SESSION['email'])) {
             </div>
           </footer>
           <!-- partial -->
+        
         </div>
         <!-- main-panel ends -->
       </div>

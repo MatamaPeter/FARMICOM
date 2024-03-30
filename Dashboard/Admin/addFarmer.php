@@ -13,14 +13,11 @@ if (!isset($_SESSION['email'])) {
 
 
 if(isset($_POST['addfarmer'])) {
-  // Check if a photo file has been uploaded and if there is no error
   if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-      $uploadDir = 'uploads/farmers-pics/'; // Ensure the directory ends with a slash
+      $uploadDir = 'uploads/farmers-pics/'; 
       $uploadFile = $uploadDir . basename($_FILES['photo']['name']); 
       
-      // Move the uploaded file to the specified directory
       if(move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
-          // If the file was successfully uploaded, proceed with inserting data into the database
           $photo = $uploadFile;
           $fname = mysqli_real_escape_string($con, $_POST['fname']);
           $lname = mysqli_real_escape_string($con, $_POST['lname']);
@@ -29,27 +26,22 @@ if(isset($_POST['addfarmer'])) {
           $id_number = mysqli_real_escape_string($con, $_POST['id_number']);
           $address = mysqli_real_escape_string($con, $_POST['address']);
           $usertype = "Farmer";
-          $password = mysqli_real_escape_string($con, $_POST['id_number']); // Consider hashing the password
+          $password = mysqli_real_escape_string($con, $_POST['id_number']); 
           $hpassword = password_hash($password, PASSWORD_DEFAULT);
           $unique_identifier = time(); 
           $member_number = "MEM-". $unique_identifier;
 
-          // Perform the database insertion
           $query = "INSERT INTO farmers (Photo, Member_number, National_id, Firstname, Lastname, Phone, Email, Address, Password, Usertype) VALUES ('$photo', '$member_number', '$id_number', '$fname', '$lname', '$phone', '$email', '$address', '$hpassword', '$usertype')";
           
           if(mysqli_query($con, $query)) {
-              // If insertion is successful, display success message
               echo "<script>alert('Farmer added successfully.');</script>";
           } else {
-              // If insertion fails, display an error message
               echo "<script>alert('Failed to add farmer to the database: " . mysqli_error($con) . "');</script>";
           }
       } else {
-          // If moving the uploaded file fails, display an error message
           echo "<script>alert('Failed to move uploaded file.');</script>";
       }
   } else {
-      // If no file was uploaded or an error occurred during upload, display an error message
       echo "<script>alert('No file uploaded or file upload error occurred.');</script>";
   }
 }
@@ -97,7 +89,7 @@ if(isset($_POST['addfarmer'])) {
           </div>
           <ul class="navbar-nav navbar-nav-right">
           <?php
-                  $select_messages=mysqli_query($con,"SELECT * FROM messages");
+                  $select_messages=mysqli_query($con,"SELECT * FROM messages LIMIT 5");
                   if($select_messages->num_rows==0){
                     ?>
                     <li class="nav-item dropdown">
@@ -198,7 +190,7 @@ if(isset($_POST['addfarmer'])) {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="categories.php">
+              <a class="nav-link" href="Supplies.php">
                 <span class="menu-title">Supplies</span>
                 <i class="mdi mdi-truck-delivery menu-icon"></i>
               </a>
@@ -212,15 +204,10 @@ if(isset($_POST['addfarmer'])) {
             <li class="nav-item">
               <a class="nav-link" href="products.php">
                 <span class="menu-title">Products</span>
-                <i class="mdi mdi-briefcase menu-icon"></i>
+                <i class="mdi mdi mdi-basket menu-icon"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="categories.php">
-                <span class="menu-title">Categories</span>
-                <i class="mdi mdi-view-stream menu-icon"></i>
-              </a>
-            </li>
+            
 
           </ul>
         </nav>
@@ -250,7 +237,7 @@ if(isset($_POST['addfarmer'])) {
                           <div class="form-group row">
                             <label class="col-sm-3 col-form-label">First Name</label>
                             <div class="col-sm-9">
-                              <input type="text" name="fname" class="form-control" />
+                              <input type="text" name="fname" class="form-control" required/>
                             </div>
                           </div>
                         </div>
@@ -258,7 +245,7 @@ if(isset($_POST['addfarmer'])) {
                           <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Last Name</label>
                             <div class="col-sm-9">
-                              <input type="text" name="lname"  class="form-control" />
+                              <input type="text" name="lname"  class="form-control" required/>
                             </div>
                           </div>
                         </div>
@@ -268,7 +255,7 @@ if(isset($_POST['addfarmer'])) {
                           <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Email</label>
                             <div class="col-sm-9">
-                              <input type="email" name="email" class="form-control" />
+                              <input type="email" name="email" class="form-control" required/>
                             </div>
                           </div>
                         </div>
@@ -276,7 +263,7 @@ if(isset($_POST['addfarmer'])) {
                           <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Phone</label>
                             <div class="col-sm-9">
-                              <input type="tel" name="phone" class="form-control" />
+                              <input type="tel" name="phone" class="form-control" required/>
                             </div>
                           </div>
                         </div>
@@ -286,7 +273,7 @@ if(isset($_POST['addfarmer'])) {
                           <div class="form-group row">
                             <label class="col-sm-3 col-form-label">ID Number</label>
                             <div class="col-sm-9">
-                              <input type="number" name="id_number" class="form-control" />
+                              <input type="number" name="id_number" class="form-control" required/>
                             </div>
                           </div>
                         </div>
@@ -294,7 +281,7 @@ if(isset($_POST['addfarmer'])) {
                           <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Address</label>
                             <div class="col-sm-9">
-                              <input type="text" name="address" class="form-control"/>
+                              <input type="text" name="address" class="form-control" required/>
                             </div>
                           </div>
                         </div>
@@ -304,7 +291,7 @@ if(isset($_POST['addfarmer'])) {
                           <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Photo</label>
                             <div class="col-sm-9">
-                              <input type="file" name="photo" class="form-control" />
+                              <input type="file" name="photo" class="form-control" required/>
                             </div>
                           </div>
                         </div>

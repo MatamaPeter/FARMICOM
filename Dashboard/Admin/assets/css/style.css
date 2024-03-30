@@ -7501,6 +7501,14 @@ textarea.form-control-lg {
 .ratio-21x9 {
   --bs-aspect-ratio: calc(9 / 21 * 100%); }
 
+  .order-select{
+    color: #004d04;
+    border: none;
+    border-radius: 5px;
+    padding:4px 8px;
+    background-color: var(--bs-gray-lighter) !important;
+  }
+
 .fixed-top {
   position: fixed;
   top: 0;

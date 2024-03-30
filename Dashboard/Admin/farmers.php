@@ -49,7 +49,7 @@ if (!isset($_SESSION['email'])) {
           </div>
           <ul class="navbar-nav navbar-nav-right">
           <?php
-                  $select_messages=mysqli_query($con,"SELECT * FROM messages");
+                  $select_messages=mysqli_query($con,"SELECT * FROM messages LIMIT 5");
                   if($select_messages->num_rows==0){
                     ?>
                     <li class="nav-item dropdown">
@@ -150,7 +150,7 @@ if (!isset($_SESSION['email'])) {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="categories.php">
+              <a class="nav-link" href="Supplies.php">
                 <span class="menu-title">Supplies</span>
                 <i class="mdi mdi-truck-delivery menu-icon"></i>
               </a>
@@ -164,15 +164,10 @@ if (!isset($_SESSION['email'])) {
             <li class="nav-item">
               <a class="nav-link" href="products.php">
                 <span class="menu-title">Products</span>
-                <i class="mdi mdi-briefcase menu-icon"></i>
+                <i class="mdi mdi mdi-basket menu-icon"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="categories.php">
-                <span class="menu-title">Categories</span>
-                <i class="mdi mdi-view-stream menu-icon"></i>
-              </a>
-            </li>
+            
 
           </ul>
         </nav>
