@@ -4,10 +4,10 @@ include 'config.php';
 
 session_start();
 
-if (isset($_SESSION['email'])) {
-    $username = $_SESSION['email'];
+if (isset($_SESSION['mail'])) {
+    $username = $_SESSION['mail'];
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
-    $stmt->bind_param("s", $_SESSION['email']);
+    $stmt->bind_param("s", $_SESSION['mail']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
@@ -17,8 +17,8 @@ if (isset($_SESSION['email'])) {
 }
 
 if (isset($_POST['update'])) {
-    if (isset($_SESSION['email'])) {
-        $username = $_SESSION['email'];
+    if (isset($_SESSION['mail'])) {
+        $username = $_SESSION['mail'];
       
         foreach ($_POST['cart_id'] as $key => $cartId) {
             $quantity = $_POST['quantity'][$cartId];
@@ -30,8 +30,8 @@ if (isset($_POST['update'])) {
 }
 // Check if the delete button is clicked
 if (isset($_POST['delete'])) {
-    if (isset($_SESSION['email'])) {
-        $username = $_SESSION['email'];
+    if (isset($_SESSION['mail'])) {
+        $username = $_SESSION['mail'];
         
         // Retrieve cart ID of the item to be deleted
         $cartId = $_POST['delete'];
@@ -173,8 +173,8 @@ if (isset($_POST['delete'])) {
                         <div class="main-nav__right">
                                 <div class="icon_cart_box">
                                     <?php
-                                    if(isset($_SESSION['email'])){
-                                        echo"<div class='usern'>{$_SESSION['email']}</div>
+                                    if(isset($_SESSION['mail'])){
+                                        echo"<div class='usern'>{$_SESSION['mail']}</div>
                                          <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
                                     }else{
                                         echo"<center><a href='lform.php'><button class='logout-button'>Login</button></a></center>";
@@ -212,8 +212,8 @@ if (isset($_POST['delete'])) {
                         <table class="cart_table">
     <thead class="cart_table_head">
         <?php
-    if (isset($_SESSION['email'])) {
-        $username = $_SESSION['email'];
+    if (isset($_SESSION['mail'])) {
+        $username = $_SESSION['mail'];
         $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
         if($select_cart->num_rows!==0){
             ?>
@@ -235,8 +235,8 @@ if (isset($_POST['delete'])) {
    
                     </thead>
                     <tbody><?php
-if (isset($_SESSION['email'])) {
-    $username = $_SESSION['email'];
+if (isset($_SESSION['mail'])) {
+    $username = $_SESSION['mail'];
     $select_cart = mysqli_query($con, "SELECT * FROM cart WHERE username = '$username'");
     $subtotal = 0; // Initialize $subtotal to 0
     if ($select_cart->num_rows !== 0) {
@@ -249,7 +249,7 @@ if (isset($_SESSION['email'])) {
                     <td colspan="2">
                         <div class="colum_box">
                             <div class="prod_thum">
-                                <a href="#"><img src="<?php echo $cart_items['image']; ?>" alt=""></a>
+                                <img width="150px" height="relative" src="Dashboard/Admin/<?php echo $cart_items['image']; ?>" alt=""></a>
                             </div>
                             <div class="title">
                                 <h3 class="prod-title"><?php echo $cart_items['name']; ?></h3>

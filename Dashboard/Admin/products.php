@@ -3,7 +3,7 @@ include ("config.php");
 session_start();
 
 if (!isset($_SESSION['email'])) {
-  header("location:lform.php");
+  header("location:../../lform.php");
   exit;
   
 } else {
@@ -97,7 +97,7 @@ if (!isset($_SESSION['email'])) {
               </a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
                 
-                <a class="dropdown-item" href="logout.php">
+                <a class="dropdown-item" href="../../logout_admins.php">
                   <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
                   <a class="dropdown-item" href="profile.php">
                   <i class="mdi mdi-account me-2 text-primary"></i> Profile </a>
@@ -218,11 +218,11 @@ if (!isset($_SESSION['email'])) {
                           </td>
                           <td> <?php echo $product_dtls['Product_name']?></td>
                           <td> <?php echo $product_dtls['Product_category']?></td>
-                          <td> <?php echo $product_dtls['Price']?></td>
-                          <td> <?php echo $product_dtls['Buying_price']?></td>
+                          <td>KES. <?php echo $product_dtls['Price']?></td>
+                          <td>KES. <?php echo $product_dtls['Buying_price']?></td>
                           <input type="hidden" name="product_id" value="<?php echo $product_dtls['ProductID']?>">
                           <td> 
-                            <button type="submit" name="edit_farmer" class="btn-tbl-farmers btn-icon-text">
+                            <button type="submit" name="edit_product" class="btn-tbl-farmers btn-icon-text">
                               <i class="mdi mdi-file-check btn-icon-prepend"></i> Edit </button></a>
                             <button type="submit" name="delete" class="btn-icon-text btn-tbl-farmers-dg">
                             <i class="mdi mdi-delete btn-icon-prepend"></i></button>

@@ -18,9 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-if (isset($_SESSION['email'])) {
+if (isset($_SESSION['mail'])) {
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
-    $stmt->bind_param("s", $_SESSION['email']);
+    $stmt->bind_param("s", $_SESSION['mail']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
@@ -158,9 +158,9 @@ if (isset($_SESSION['email'])) {
                             <div class="main-nav__right">
                             <div class="icon_cart_box">
                                 <?php
-                                if(isset($_SESSION['email'])){
+                                if(isset($_SESSION['mail'])){
                                     
-                                    echo"<div class='usern'>{$_SESSION['email']}</div>
+                                    echo"<div class='usern'>{$_SESSION['mail']}</div>
                                      <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
                                 }else{
                                     echo"<center><a href='lform.php'><button class='logout-button'>Login</button></a></center>";

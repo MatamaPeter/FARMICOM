@@ -3,7 +3,7 @@ include ("config.php");
 session_start();
 
 if (!isset($_SESSION['email'])) {
-  header("location:lform.php");
+  header("location:../../lform.php");
   exit;
   
 } else {
@@ -97,7 +97,7 @@ if (!isset($_SESSION['email'])) {
               </a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
                 
-                <a class="dropdown-item" href="logout.php">
+                <a class="dropdown-item" href="../../logout_admins.php">
                   <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
                   <a class="dropdown-item" href="profile.php">
                   <i class="mdi mdi-account me-2 text-primary"></i> Profile </a>
@@ -196,12 +196,12 @@ if (!isset($_SESSION['email'])) {
                     <form class="forms-sample" action="addProduct.php" method="post" enctype="multipart/form-data">
                       <div class="form-group">
                         <label for="exampleInputUsername1">Name</label>
-                        <input type="text" class="form-control" name="product" id="exampleInputUsername1" placeholder="Product name">
+                        <input type="text" class="form-control" name="product" id="exampleInputUsername1" placeholder="Product name" required>
                       </div>
                       <div class="form-group">
                          
                         <label for="exampleInputEmail1">Category</label>
-                        <select class="form-control" name="category" id="">
+                        <select class="form-control" name="category" id="" required>
                              <option selected value="">Select category</option>
                              <?php
                               $select_category = mysqli_query($con, "SELECT * FROM category");
@@ -213,15 +213,15 @@ if (!isset($_SESSION['email'])) {
                       </div>
                       <div class="form-group">
                         <label for="exampleInputPassword1">Price</label>
-                        <input type="number" class="form-control" name="price" id="exampleInputPassword1" placeholder="Price">
+                        <input type="number" class="form-control" name="price" id="exampleInputPassword1" placeholder="Price" required>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputConfirmPassword1">Buying price</label>
-                        <input type="number" class="form-control" name="bp" id="exampleInputConfirmPassword1" placeholder="Buying Price">
+                        <input type="number" class="form-control" name="bp" id="exampleInputConfirmPassword1" placeholder="Buying Price" required>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputConfirmPassword1">Image</label>
-                        <input type="file" class="form-control" name="photo"  placeholder="Product image">
+                        <input type="file" class="form-control" name="photo"  placeholder="Product image" required>
                       </div>
                       
                       <button type="submit" name="addproduct" class="btn btn-gradient-primary me-2">Submit</button>

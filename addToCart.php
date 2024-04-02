@@ -2,13 +2,13 @@
 session_start();
 include("config.php");
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['mail'])) {
     $message = 'Kindly login to place order';
     echo $message;
     exit;
     
 } else {
-    $username = $_SESSION['email'];
+    $username = $_SESSION['mail'];
 }
 
 $product_name = $_POST['product_name'];

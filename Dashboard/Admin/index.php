@@ -3,7 +3,7 @@ include ("config.php");
 session_start();
 
 if (!isset($_SESSION['email'])) {
-  header("location:lform.php");
+  header("location:../../lform.php");
   exit;
   
 } else {
@@ -96,7 +96,7 @@ if (!isset($_SESSION['email'])) {
               </a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
                 
-                <a class="dropdown-item" href="logout.php">
+                <a class="dropdown-item" href="../../logout_admins.php">
                   <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
                   <a class="dropdown-item" href="profile.php">
                   <i class="mdi mdi-account me-2 text-primary"></i> Profile </a>
@@ -165,7 +165,7 @@ if (!isset($_SESSION['email'])) {
             <li class="nav-item">
               <a class="nav-link" href="products.php">
                 <span class="menu-title">Products</span>
-                <i class="mdi mdi mdi-basketmenu-icon"></i>
+                <i class="mdi mdi mdi-basket menu-icon"></i>
               </a>
             </li>
             

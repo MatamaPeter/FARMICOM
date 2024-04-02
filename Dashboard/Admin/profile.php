@@ -3,7 +3,7 @@ include ("config.php");
 session_start();
 
 if (!isset($_SESSION['email'])) {
-  header("location:lform.php");
+  header("location:../../lform.php");
   exit;
   
 } else {
@@ -106,7 +106,7 @@ mysqli_query($con, "UPDATE users SET Username='$uname', Email='$email', Phone='$
               </a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
                 
-                <a class="dropdown-item" href="logout.php">
+                <a class="dropdown-item" href="../../logout_admins.php">
                   <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
                   <a class="dropdown-item" href="profile.php">
                   <i class="mdi mdi-account me-2 text-primary"></i> Profile </a>

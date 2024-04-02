@@ -4,10 +4,10 @@ include 'config.php';
 
 session_start();
 
-if (isset($_SESSION['email'])) {
-    $username = $_SESSION['email'];
+if (isset($_SESSION['mail'])) {
+    $username = $_SESSION['mail'];
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
-    $stmt->bind_param("s", $_SESSION['email']);
+    $stmt->bind_param("s", $_SESSION['mail']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
@@ -146,8 +146,8 @@ if (isset($_SESSION['email'])) {
                         <div class="main-nav__right">
                                 <div class="icon_cart_box">
                                     <?php
-                                    if(isset($_SESSION['email'])){
-                                        echo"<div class='usern'>{$_SESSION['email']}</div>
+                                    if(isset($_SESSION['mail'])){
+                                        echo"<div class='usern'>{$_SESSION['mail']}</div>
                                          <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
                                     }else{
                                         echo"<center><a href='lform.php'><button class='logout-button'>Login</button></a></center>";
@@ -183,6 +183,14 @@ if (isset($_SESSION['email'])) {
                     <div class="col-xl-12">
                         <div class="cart_table_box">
                         <table class="cart_table">
+                        <?php
+if (isset($_SESSION['mail'])) {
+    $username = $_SESSION['mail'];
+    $select_order = mysqli_query($con, "SELECT * FROM orders WHERE user_email = '$username'");
+    if ($select_order->num_rows == 0) {
+        echo "<centre><h1>No orders</h1></centre>";
+    }else{
+    ?>    
     <thead class="cart_table_head">
     <tr>
       <th class="px-4 py-2">Product</th>
@@ -194,11 +202,8 @@ if (isset($_SESSION['email'])) {
     </tr>
 
                     </thead>
-                    <?php
-if (isset($_SESSION['email'])) {
-    $username = $_SESSION['email'];
-    $select_order = mysqli_query($con, "SELECT * FROM orders WHERE user_email = '$username'");
-    if ($select_order->num_rows !== 0) {
+        <?php
+        
         while ($order_items = mysqli_fetch_assoc($select_order)) {
            
 ?>
@@ -216,13 +221,8 @@ if (isset($_SESSION['email'])) {
 
 
 <?php
-            }
         }
-     else {
-        echo "<centre><h1>Cart is empty</h1></centre>";
-    }
-} else {
-    echo "Cart is empty";
+        }
 }
 ?>
 </table>

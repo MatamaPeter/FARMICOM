@@ -3,7 +3,7 @@ include ("config.php");
 session_start();
 
 if (!isset($_SESSION['email'])) {
-  header("location:lform.php");
+  header("location:../../lform.php");
   exit;
   
 } else {
@@ -116,7 +116,7 @@ if (isset($_POST['delete_order'])) {
               </a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
                 
-                <a class="dropdown-item" href="logout.php">
+                <a class="dropdown-item" href="../../logout_admins.php">
                   <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
                   <a class="dropdown-item" href="profile.php">
                   <i class="mdi mdi-account me-2 text-primary"></i> Profile </a>
@@ -237,7 +237,7 @@ if (isset($_POST['delete_order'])) {
                           <td> <?php echo $order_dtls['User_email'] ?></td>
                           <td>  <?php if($order_dtls['payment_status']=='complete'){
                                 echo " <label class='badge badge-gradient-success'>DONE</label>";
-                              }elseif ($order_dtls['payment_status']== 'pending') {
+                              }elseif ($order_dtls['payment_status']== 'Pending') {
                                 echo " <label class='badge badge-gradient-danger'>PENDING</label>";
                               }
                                 ?>

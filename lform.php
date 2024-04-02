@@ -1,7 +1,7 @@
 
 <?php
 session_start();
-unset($_SESSION['username']);
+unset($_SESSION['user']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,42 +35,79 @@ unset($_SESSION['username']);
 					<img src="assets/images/img-01.png" alt="IMG">
 				</div>
 				<?php
-				include("config.php");
-
-				if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-					$Email=$_POST['email'];
-					$password=$_POST['pass'];
 				
-					$stmt = $con -> prepare("SELECT * FROM users WHERE Email =?");
-					$stmt -> bind_param("s", $Email);
-					$stmt -> execute();
-					$Validate_user = $stmt -> get_result();
-
-					if($Validate_user -> num_rows !==0){
-					$row = $Validate_user->fetch_assoc();
-					$Hashed_password =$row['Password'];
-					
-						if(password_verify($password, $Hashed_password)){
-							$_SESSION['username'] = $row['Username'];
-							$_SESSION['email'] = $row['Email'];
+				include("config.php");
+				
+				if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+					$Email = $_POST['email'];
+					$password = $_POST['pass'];
+				
+					// Query the 'users' table for 'User' type
+					$stmt = $con->prepare("SELECT * FROM users WHERE Email = ? AND Usertype = 'User'");
+					$stmt->bind_param("s", $Email);
+					$stmt->execute();
+					$user_result = $stmt->get_result();
+				
+					// Query the 'users' table for 'Admin' type
+					$stmt = $con->prepare("SELECT * FROM users WHERE Email = ? AND Usertype = 'Admin'");
+					$stmt->bind_param("s", $Email);
+					$stmt->execute();
+					$admin_result = $stmt->get_result();
+				
+					// Query the 'farmers' table
+					$stmt = $con->prepare("SELECT * FROM farmers WHERE Member_number = ?");
+					$stmt->bind_param("s", $Email);
+					$stmt->execute();
+					$farmer_result = $stmt->get_result();
+				
+					// Check if the user is found in 'users' table with 'User' type
+					if ($user_result->num_rows !== 0) {
+						$row = $user_result->fetch_assoc();
+						$Hashed_password = $row['Password'];
+				
+						if (password_verify($password, $Hashed_password)) {
+							$_SESSION['user'] = $row['Username'];
+							$_SESSION['mail'] = $row['Email'];
 							header("location:index.php");
 							exit();
-
-						}else{
-							echo"<div class='message'><p class='wrap-input100 validate-input'>Invalid Credentials</p>
-							<a href='javascript:self.history.back()'><button class='login100-form-btn'>Try Again</div>";		
-							exit();
-
-						}
-					}else{
-						echo"<div class='message'><p class='wrap-input100 validate-input'>User not registered</p>
-						<a href='javascript:self.history.back()'><button class='login100-form-btn'>Go back</div>";
 						}
 					}
-				else{
+				
+					// Check if the user is found in 'users' table with 'Admin' type
+					elseif ($admin_result->num_rows !== 0) {
+						$row = $admin_result->fetch_assoc();
+						$Hashed_password = $row['Password'];
+				
+						if (password_verify($password, $Hashed_password)) {
+							$_SESSION['username'] = $row['Username'];
+							$_SESSION['email'] = $row['Email'];
+							header("location:Dashboard/Admin/index.php");
+							exit();
+						}
+					}
+				
+					// Check if the user is found in 'farmers' table
+					elseif ($farmer_result->num_rows !== 0) {
+						$row = $farmer_result->fetch_assoc();
+						$Hashed_password = $row['Password'];
+				
+						if (password_verify($password, $Hashed_password)) {
+							$_SESSION['farmers'] = $row['Email'];
+							$_SESSION['member'] = $row['Member_number'];
+							$_SESSION['photo'] = $row['Photo'];
+							header("location:Dashboard/Farmer/index.php");
+							exit();
+						}
+					}
+				
+					// If the credentials are invalid or user not found, display an error message
+					echo "<div class='message'><p class='wrap-input100 validate-input'>Invalid Credentials</p>
+					<a href='javascript:self.history.back()'><button class='login100-form-btn'>Try Again</div>";
+					exit();
+				}
 				?>
 				<form class="login100-form validate-form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" method="post">
-						<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<div class="wrap-input100 " data-validate = "Username is required">
 						<input class="input100" type="text" name="email" placeholder="Email">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
@@ -108,7 +145,7 @@ unset($_SESSION['username']);
 						</a>
 					</div>
 				</form>
-				<?php } ?>
+				
 			</div>
 		</div>
 	</div>

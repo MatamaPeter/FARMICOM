@@ -4,7 +4,7 @@ session_start();
 
 // Redirect to login page if user is not logged in
 if (!isset($_SESSION['email'])) {
-    header("location: lform.php");
+    header("location: ../../lform.php");
     exit;
 } else {
     $username = $_SESSION['email'];

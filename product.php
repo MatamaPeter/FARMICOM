@@ -5,10 +5,10 @@ include("config.php");
 
 
 
-if (isset($_SESSION['email'])) {
-    $username = $_SESSION['email'];
+if (isset($_SESSION['mail'])) {
+    $username = $_SESSION['mail'];
     $stmt = $con->prepare("SELECT * FROM cart WHERE Username = ?") or die("Query failed");
-    $stmt->bind_param("s", $_SESSION['email']);
+    $stmt->bind_param("s", $_SESSION['mail']);
     $stmt->execute();
     $cart_sum = $stmt->get_result();
     $Cart_number = $cart_sum->num_rows;
@@ -118,6 +118,8 @@ if (isset($_SESSION['email'])) {
                                             
                                             <li><a href="cart.php">Cart</a></li>
                                             <li><a href="checkout.php">Checkout</a></li>
+                                            <li><a href="orders.php">Orders</a></li>
+
                                         </ul><!-- /.sub-menu -->
                                     </li>
                                     
@@ -144,8 +146,8 @@ if (isset($_SESSION['email'])) {
                             <div class="main-nav__right">
                                 <div class="icon_cart_box">
                                     <?php
-                                    if(isset($_SESSION['email'])){
-                                        echo"<div class='usern'>{$_SESSION['email']}</div>
+                                    if(isset($_SESSION['mail'])){
+                                        echo"<div class='usern'>{$_SESSION['mail']}</div>
                                          <center><a href='logout.php'><button class='logout-button'>Logout</button></a></center>";
                                     }else{
                                         echo"<center><a href='lform.php'><button class='logout-button'>Login</button></a></center>";
@@ -235,7 +237,7 @@ if (isset($_SESSION['email'])) {
                                         <li>
                                             <div class="product_item">
                                                 <div class="img-box">
-                                                    <img src="<?php echo $fetch_products['Product_img'];?>" alt="">
+                                                    <img src="Dashboard/Admin/<?php echo $fetch_products['Product_img']; ?>" alt="">
                                                     <div class="overlay-content">
                                                         <a href="#"><i class="fa fa-link" aria-hidden="true"></i></a>
                                                     </div>
@@ -273,7 +275,7 @@ if (isset($_SESSION['email'])) {
                                         <div class="all_products_single text-center">
                                             <div class="all_product_item_image">
                                         <form id="productForm" action="addToCart.php" method="POST" enctype="multipart/form-data">
-                                                <img src="assets/images/shop/cart_product_img-1.jpg" alt="">
+                                                <img src="Dashboard/Admin/<?php echo $fetch_products['Product_img']; ?>" alt="">
                                                 <div class="all_product_hover">
                                                     <div class="all_product_icon">
                                                     <a href="#" id="addToCartLink"><span class="icon-shopping-cart"> </span></a>
@@ -281,7 +283,7 @@ if (isset($_SESSION['email'])) {
                                                 </div>
                                             </div>
                                             <h4><?php echo $fetch_products['Product_name']; ?></h4>
-                                            <p><?php echo $fetch_products['Price']; ?></p>
+                                            <p>KES.<?php echo $fetch_products['Price']; ?></p>
                                             <input type="hidden" name="product_name" value="<?php echo $fetch_products['Product_name']; ?>">
                                             <input type="hidden" name="price" value="<?php echo $fetch_products['Price']; ?>">
                                             <input type="hidden" name="product_image" value="<?php echo $fetch_products['Product_img']; ?>">
